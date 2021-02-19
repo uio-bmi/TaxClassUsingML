@@ -1,5 +1,5 @@
 # This class is used to prepare the dataset for training by transforming it to a more workable format.
-# This includes splitting the given FASTA file into seperate training and answer sets, as well as counting k-mers.
+# This includes standardizing the DNA sequences for more convenient comparison.
 
 import numpy as np
 
@@ -7,17 +7,26 @@ class FastaGeneDataset:
     __trainingSet = []
     __trainingLabels = []
 
+    # Contains overview of all k-mers in the dataset.
+    __dictionary = {}
+    __preDict = {}
+
     def __init__(self, file, kmerLength):
         # Create list with all elements in file.
         dataset = file.read().split(">")
         dataset.pop(0)
-        dataset = dataset[:5]
-        for element in dataset:
-            temp = element.split("\n")
+        dataset = dataset[:100]
+        for elem in dataset:
+            temp = elem.split("\n")
+            # Create training set and labels.
             self.__trainingLabels.append(float(temp[0]))
-            self.__trainingSet.append(temp[1])
-        # Transform training set to appropriate format.
-        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, kmerLength)
+            self.__trainingSet.append(self.__seqToKmers(temp[1], kmerLength))
+            # Build preliminary dictionary with all kmers.
+            kmers = self.__seqToKmers(temp[1], kmerLength)
+            self.__preDictionary(kmers)
+        self.__buildDictionary() # With fewer kmers
+        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet) # With numeric values
+
 
     # Method returns all training sequences.
     def getTrainingSet(self):
@@ -51,48 +60,71 @@ class FastaGeneDataset:
     # Method creates two matching arrays, one with every unique k-mer, and another with values indicating the number
     # of each k-mer.
     @staticmethod
-    def __countKmers(kmers):
-        kmer_counts = []
+    def __uniqueKmers(kmers):
         unique_kmers = []
-
         # Add every new k-mer discovered to the output arrays.
         while len(kmers) > 0:
             elem = kmers[0]
-            kmer_counts.append(1)
             unique_kmers.append(elem)
-
             # Look for other identical k-mers in the list, count them and delete them.
             index = 1
-            temp = []
             while index < len(kmers):
                 other = kmers[index]
                 if elem == other:
-                    kmer_counts[-1] += 1
                     del kmers[index]
                     if index > 1:
                         index -= 1
                 index += 1
-
             # Delete the k-mer which has been added to the list so it's only counted once.
             del kmers[0]
-
-        kmer_counts = kmer_counts[:1500]
-        kmer_counts = np.array(kmer_counts, float)
-        unique_kmers = np.array(unique_kmers, str)
-        result = np.array([kmer_counts, unique_kmers], dtype=object)
-        return result
+        return unique_kmers
 
     # Method transforms the dataset from raw data into a float vector representation for each element in
     # the training set.
-    def __prepareTrainingSet(self, set, kmerLength):
+    def __prepareTrainingSet(self, set):
         training_set = []
-
         for elem in set:
-            kmers = self.__seqToKmers(elem, kmerLength)
-            float_rep = self.__countKmers(kmers)
-            training_set.append(float_rep[0])
-
+            temp = [0] * (len(self.__dictionary) + 1)
+            for kmer in elem:
+                pos = self.__dictionary.get(kmer)
+                if pos != None:
+                  temp[pos] = temp[pos] + 1
+            training_set.append(temp)
         training_set = np.array(training_set, dtype=np.float)
         training_set = training_set / 255.0
-
         return training_set
+
+
+    # METHODS USED TO CREATE K-MER DICTIONARY
+
+    # Method creates the preliminary dictionary given a set of kmers.
+    def __preDictionary(self, kmers):
+        for kmer in kmers:
+            if self.__preDict:
+                if kmer in self.__preDict.keys():
+                    self.__preDict[kmer] += 1
+                else:
+                    self.__preDict[kmer] = 1
+            else:
+                self.__preDict[kmer] = 1
+
+    # Method handles creating the final dictionary.
+    def __buildDictionary(self):
+        self.__weedOutUselessKmers(50)
+        self.__addToDictionary()
+
+    # Method adds kmers to the final dictionary from hte preliminary dictionary.
+    def __addToDictionary(self):
+        index = 0
+        for kmer in self.__preDict.keys():
+            self.__dictionary[kmer] = index
+            index += 1
+
+    # Method removes kmers which are very common accross DNA sequences.
+    def __weedOutUselessKmers(self, commonalityTreshold):
+        toBeDeleted = []
+        for kmer in self.__preDict.keys():
+            if self.__preDict.get(kmer) > commonalityTreshold:
+                toBeDeleted.append(kmer)
+        for elem in toBeDeleted:
+            del self.__preDict[elem]
