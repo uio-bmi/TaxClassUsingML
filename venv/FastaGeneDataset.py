@@ -11,7 +11,7 @@ class FastaGeneDataset:
     __dictionary = {}
     __preDict = {}
 
-    def __init__(self, file, kmerLength):
+    def __init__(self, file, kmerLength, seqLength):
         # Create list with all elements in file.
         dataset = file.read().split(">")
         dataset.pop(0)
@@ -25,7 +25,7 @@ class FastaGeneDataset:
             kmers = self.__seqToKmers(temp[1], kmerLength)
             self.__preDictionary(kmers)
         self.__buildDictionary() # With fewer kmers
-        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet) # With numeric values
+        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, seqLength) # With numeric values
 
 
     # Method returns all training sequences.
@@ -79,16 +79,18 @@ class FastaGeneDataset:
             del kmers[0]
         return unique_kmers
 
-    # Method transforms the dataset from raw data into a float vector representation for each element in
-    # the training set.
-    def __prepareTrainingSet(self, set):
+    # Method transforms each element in dataset from a set of kmers, to a vector with a numerical representation of
+    # each kmer.
+    def __prepareTrainingSet(self, set, seqLength):
         training_set = []
         for elem in set:
-            temp = [0] * (len(self.__dictionary) + 1)
-            for kmer in elem:
-                pos = self.__dictionary.get(kmer)
-                if pos != None:
-                  temp[pos] = temp[pos] + 1
+            temp = [0] * seqLength
+            for index in range(seqLength - 1):
+                kmer_num = self.__dictionary.get(elem[index])
+                if kmer_num != None:
+                  temp[index] = kmer_num
+                else:
+                    temp[index] = 0
             training_set.append(temp)
         training_set = np.array(training_set, dtype=np.float)
         training_set = training_set / 255.0
@@ -115,7 +117,8 @@ class FastaGeneDataset:
 
     # Method adds kmers to the final dictionary from hte preliminary dictionary.
     def __addToDictionary(self):
-        index = 0
+        # Index 0 is reserved for un-recognisable kmers.
+        index = 1
         for kmer in self.__preDict.keys():
             self.__dictionary[kmer] = index
             index += 1

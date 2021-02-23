@@ -6,7 +6,7 @@ from FastaGeneDataset import FastaGeneDataset
 
 # Use FASTA file to create a dataset object.
 file = open("gg_12_10.fasta", "r")
-dataset = FastaGeneDataset(file, 6)
+dataset = FastaGeneDataset(file, 6, 1500)
 file.close()
 
 # Prepare training set and training labels.
