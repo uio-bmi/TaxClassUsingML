@@ -2,7 +2,8 @@
 # This includes standardizing the DNA sequences for more convenient comparison.
 
 import numpy as np
-from Tools.Dictionary import Dictionary
+from Tools.dictionary import Dictionary
+from Tools.set_manipulation import SetManupulation
 
 class FastaGeneDataset:
     __trainingSet = []
@@ -39,7 +40,6 @@ class FastaGeneDataset:
         self.__trainingLabels = self.__prepareLabelSet(self.__trainingLabels, labelDictionary.getIndexDictionary())
 
 
-
     # Method returns all training sequences.
     def getTrainingSet(self):
         return self.__trainingSet
@@ -56,7 +56,6 @@ class FastaGeneDataset:
     def getTrainingLabel(self, index):
         return self.__trainingLabels[index]
 
-
     # Method transforms a DNA sequence into list of k-mers of given length.
     @staticmethod
     def __seqToKmers(sequence, kmer_length):
@@ -69,31 +68,10 @@ class FastaGeneDataset:
             kmer_sequence.append(temp)
         return kmer_sequence
 
-    # Method returns an array with all unique kmers from a list of kmers.
-    @staticmethod
-    def __uniqueKmers(kmers):
-        unique_kmers = []
-        # Add every new k-mer discovered to the output arrays.
-        while len(kmers) > 0:
-            elem = kmers[0]
-            unique_kmers.append(elem)
-            # Look for other identical k-mers in the list, count them and delete them.
-            index = 1
-            while index < len(kmers):
-                other = kmers[index]
-                if elem == other:
-                    del kmers[index]
-                    if index > 1:
-                        index -= 1
-                index += 1
-            # Delete the k-mer which has been added to the list so it's only counted once.
-            del kmers[0]
-        return unique_kmers
-
     # Method transforms the training set replacing each element with a numerical representation.
     def __prepareTrainingSet(self, set, kmerDictionary):
         training_set = []
-        seqLength = self.__findLongestList(set)
+        seqLength = SetManupulation.findLongestList(set)
         for elem in set: #Go through each sequence
             temp = [0] * seqLength
             for index in range(seqLength - 1): # Go through each kmer in sequence
@@ -109,14 +87,6 @@ class FastaGeneDataset:
         training_set = np.array(training_set, dtype=np.float)
         training_set = training_set / 255.0
         return training_set
-
-    # Method takes a list of lists and returns the length of the longest list.
-    def __findLongestList(self, lists):
-        longestLength = 0
-        for list in lists:
-            if len(list) > longestLength:
-                longestLength = len(list)
-        return longestLength
 
     # Method takes a set of labels and returns a numpy array where each label has
     # been encoded.

@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 import numpy as np
-from FastaGeneDataset import FastaGeneDataset
+from fasta_gene_dataset import FastaGeneDataset
 
 # Use FASTA file to create a dataset object.
 file = open("gg_12_10.fasta", "r")
