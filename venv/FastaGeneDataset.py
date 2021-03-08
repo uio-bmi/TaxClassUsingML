@@ -2,47 +2,43 @@
 # This includes standardizing the DNA sequences for more convenient comparison.
 
 import numpy as np
+from Tools.Dictionary import Dictionary
 
 class FastaGeneDataset:
     __trainingSet = []
     __trainingLabels = []
 
-    # Contains overview of all k-mers in the dataset.
-    __dictionary = {}
-    __preDict = {}
-
-    # Contains overview of all labels in the dataset.
-    __labelDict = {}
-
     def __init__(self, file, kmerLength):
         # Create list with all elements in file.
         dataset = file.read().split(">")
         dataset.pop(0)
-        dataset = dataset[:200]
+        dataset = dataset[:100]
+
+        # Initialize dictionaries
+        kmerDictionary = Dictionary(True) # To hold all kmers
+        labelDictionary = Dictionary(False) # To hold all labels
 
         for elem in dataset:
             temp = elem.split("\n")
 
-            # Add element to training set and label set.
+            # Add element to training set and label set
             self.__trainingLabels.append(float(temp[0]))
             self.__trainingSet.append(self.__seqToKmers(temp[1], kmerLength))
 
-            # Build preliminary dictionary with all kmers.
+            # Add values to dictionaries
             kmers = self.__seqToKmers(temp[1], kmerLength)
-            self.__preDictionary(kmers)
+            kmerDictionary.addSetToCounterDictionary(kmers)
+            labelDictionary.addToIndexDictionary(float(temp[0]))
 
-            # Add new label to label dictionary.
-            self.__addLabelToDict(float(temp[0]))
-
-        self.__buildDictionary() # The final kmer dictionary
+        # Remove common kmers from dictionary
+        kmerDictionary.counterDictionaryCommonalityThresholdRemoval(50)
+        kmerDictionary.addSetToDictionary(kmerDictionary.getCounterDictionary())
 
         # Format training and label sets.
-        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet)
-        self.__trainingLabels = self.__prepareLabelSet(self.__trainingLabels)
+        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, kmerDictionary.getIndexDictionary())
+        self.__trainingLabels = self.__prepareLabelSet(self.__trainingLabels, labelDictionary.getIndexDictionary())
 
-    # Method adds a label to the label dictionary.
-    def __addLabelToDict(self, label):
-        self.__labelDict[label] = len(self.__labelDict)
+
 
     # Method returns all training sequences.
     def getTrainingSet(self):
@@ -95,14 +91,14 @@ class FastaGeneDataset:
         return unique_kmers
 
     # Method transforms the training set replacing each element with a numerical representation.
-    def __prepareTrainingSet(self, set):
+    def __prepareTrainingSet(self, set, kmerDictionary):
         training_set = []
         seqLength = self.__findLongestList(set)
         for elem in set: #Go through each sequence
             temp = [0] * seqLength
             for index in range(seqLength - 1): # Go through each kmer in sequence
                 try: #Replace kmer with number from dictionary
-                    kmer_num = self.__dictionary.get(elem[index])
+                    kmer_num = kmerDictionary.get(elem[index])
                     if kmer_num != None:
                        temp[index] = kmer_num
                     else:
@@ -124,48 +120,10 @@ class FastaGeneDataset:
 
     # Method takes a set of labels and returns a numpy array where each label has
     # been encoded.
-    def __prepareLabelSet(self, trainingLabels):
+    def __prepareLabelSet(self, trainingLabels, labelDictionary):
         labels = []
         for label in trainingLabels:
-            print(label)
-            temp = self.__labelDict[label]
+            temp = labelDictionary[label]
             labels.append(temp)
         labels = np.array(labels, dtype=np.float)
         return labels
-
-
-
-    # METHODS USED TO CREATE K-MER DICTIONARY
-
-    # Method creates the preliminary dictionary given a set of kmers.
-    def __preDictionary(self, kmers):
-        for kmer in kmers:
-            if self.__preDict:
-                if kmer in self.__preDict.keys():
-                    self.__preDict[kmer] += 1
-                else:
-                    self.__preDict[kmer] = 1
-            else:
-                self.__preDict[kmer] = 1
-
-    # Method handles creating the final dictionary.
-    def __buildDictionary(self):
-        self.__weedOutUselessKmers(50)
-        self.__addToDictionary()
-
-    # Method adds kmers to the final dictionary from hte preliminary dictionary.
-    def __addToDictionary(self):
-        # Index 0 is reserved for un-recognisable kmers.
-        index = 1
-        for kmer in self.__preDict.keys():
-            self.__dictionary[kmer] = index
-            index += 1
-
-    # Method removes kmers which are very common accross DNA sequences.
-    def __weedOutUselessKmers(self, commonalityTreshold):
-        toBeDeleted = []
-        for kmer in self.__preDict.keys():
-            if self.__preDict.get(kmer) > commonalityTreshold:
-                toBeDeleted.append(kmer)
-        for elem in toBeDeleted:
-            del self.__preDict[elem]

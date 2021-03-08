@@ -23,7 +23,7 @@ input_shape = len(training_set[0])
 model = tf.keras.Sequential([
     layers.Flatten(input_shape=(input_shape,)),
     layers.Dense(400, activation='relu'),
-    layers.Dense(200)
+    layers.Dense(101)
 ])
 
 
