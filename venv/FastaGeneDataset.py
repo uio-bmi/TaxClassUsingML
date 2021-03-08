@@ -11,28 +11,44 @@ class FastaGeneDataset:
     __dictionary = {}
     __preDict = {}
 
+    # Contains overview of all labels in the dataset.
+    __labelDict = {}
+
     def __init__(self, file, kmerLength):
         # Create list with all elements in file.
         dataset = file.read().split(">")
         dataset.pop(0)
-        dataset = dataset[:100]
+        dataset = dataset[:200]
+
         for elem in dataset:
             temp = elem.split("\n")
-            # Create training set and labels.
+
+            # Add element to training set and label set.
             self.__trainingLabels.append(float(temp[0]))
             self.__trainingSet.append(self.__seqToKmers(temp[1], kmerLength))
+
             # Build preliminary dictionary with all kmers.
             kmers = self.__seqToKmers(temp[1], kmerLength)
             self.__preDictionary(kmers)
-        self.__buildDictionary() # With fewer kmers
-        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, 1500) # With numeric values
 
+            # Add new label to label dictionary.
+            self.__addLabelToDict(float(temp[0]))
+
+        self.__buildDictionary() # The final kmer dictionary
+
+        # Format training and label sets.
+        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet)
+        self.__trainingLabels = self.__prepareLabelSet(self.__trainingLabels)
+
+    # Method adds a label to the label dictionary.
+    def __addLabelToDict(self, label):
+        self.__labelDict[label] = len(self.__labelDict)
 
     # Method returns all training sequences.
     def getTrainingSet(self):
         return self.__trainingSet
 
-    # Method returns all correct classification for each sequence.
+    # Method returns the training labels for the dataset.
     def getTrainingLabels(self):
         return self.__trainingLabels
 
@@ -40,12 +56,12 @@ class FastaGeneDataset:
     def getTrainingElement(self, index):
         return self.__trainingSet[index]
 
-    # Method returns a specific answer from the answer set.
+    # Method returns a specific answer from the label set.
     def getTrainingLabel(self, index):
         return self.__trainingLabels[index]
 
 
-    # Method transforms a nucleotide sequence into list of k-mers of given length.
+    # Method transforms a DNA sequence into list of k-mers of given length.
     @staticmethod
     def __seqToKmers(sequence, kmer_length):
         nuc_sequence = sequence
@@ -57,8 +73,7 @@ class FastaGeneDataset:
             kmer_sequence.append(temp)
         return kmer_sequence
 
-    # Method creates two matching arrays, one with every unique k-mer, and another with values indicating the number
-    # of each k-mer.
+    # Method returns an array with all unique kmers from a list of kmers.
     @staticmethod
     def __uniqueKmers(kmers):
         unique_kmers = []
@@ -79,8 +94,7 @@ class FastaGeneDataset:
             del kmers[0]
         return unique_kmers
 
-    # Method transforms each element in dataset from a set of kmers, to an array with a numerical
-    # representation of each kmer.
+    # Method transforms the training set replacing each element with a numerical representation.
     def __prepareTrainingSet(self, set):
         training_set = []
         seqLength = self.__findLongestList(set)
@@ -107,6 +121,18 @@ class FastaGeneDataset:
             if len(list) > longestLength:
                 longestLength = len(list)
         return longestLength
+
+    # Method takes a set of labels and returns a numpy array where each label has
+    # been encoded.
+    def __prepareLabelSet(self, trainingLabels):
+        labels = []
+        for label in trainingLabels:
+            print(label)
+            temp = self.__labelDict[label]
+            labels.append(temp)
+        labels = np.array(labels, dtype=np.float)
+        return labels
+
 
 
     # METHODS USED TO CREATE K-MER DICTIONARY

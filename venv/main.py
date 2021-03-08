@@ -13,11 +13,7 @@ file.close()
 
 # Prepare training set and training labels.
 training_set = dataset.getTrainingSet()
-training_labels = []
-for x in range(100):
-    training_labels.append(float(x))
-training_labels = np.array(training_labels, dtype=np.float)
-
+training_labels = dataset.getTrainingLabels()
 
 input_shape = len(training_set[0])
 
@@ -27,7 +23,7 @@ input_shape = len(training_set[0])
 model = tf.keras.Sequential([
     layers.Flatten(input_shape=(input_shape,)),
     layers.Dense(400, activation='relu'),
-    layers.Dense(100)
+    layers.Dense(200)
 ])
 
 
