@@ -1,12 +1,14 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
 import numpy as np
 from FastaGeneDataset import FastaGeneDataset
 
 # Use FASTA file to create a dataset object.
 file = open("gg_12_10.fasta", "r")
-dataset = FastaGeneDataset(file, 6, 1500)
+dataset = FastaGeneDataset(file, 6)
 file.close()
 
 # Prepare training set and training labels.
@@ -16,20 +18,18 @@ for x in range(100):
     training_labels.append(float(x))
 training_labels = np.array(training_labels, dtype=np.float)
 
+
 input_shape = len(training_set[0])
 
 # Create neural network
+
+# 68
 model = tf.keras.Sequential([
-    tf.keras.layers.Flatten(input_shape=(input_shape,)),
-    tf.keras.layers.Dense(300, activation='relu'),
-    tf.keras.layers.Dense(100)
+    layers.Flatten(input_shape=(input_shape,)),
+    layers.Dense(400, activation='relu'),
+    layers.Dense(100)
 ])
 
-#inputs = tf.keras.Input(shape=(1500))
-#x = tf.keras.layers.Dense(1360, activation='relu')(inputs)
-#x = tf.keras.layers.Dense(1360, activation='relu')(x)
-#outputs = tf.keras.layers.Dense(100, activation='softmax')(x)
-#model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
 # Build model
 model.compile(optimizer='adam',

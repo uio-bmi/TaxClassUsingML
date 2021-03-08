@@ -11,7 +11,7 @@ class FastaGeneDataset:
     __dictionary = {}
     __preDict = {}
 
-    def __init__(self, file, kmerLength, seqLength):
+    def __init__(self, file, kmerLength):
         # Create list with all elements in file.
         dataset = file.read().split(">")
         dataset.pop(0)
@@ -25,7 +25,7 @@ class FastaGeneDataset:
             kmers = self.__seqToKmers(temp[1], kmerLength)
             self.__preDictionary(kmers)
         self.__buildDictionary() # With fewer kmers
-        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, seqLength) # With numeric values
+        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, 1500) # With numeric values
 
 
     # Method returns all training sequences.
@@ -79,22 +79,34 @@ class FastaGeneDataset:
             del kmers[0]
         return unique_kmers
 
-    # Method transforms each element in dataset from a set of kmers, to a vector with a numerical representation of
-    # each kmer.
-    def __prepareTrainingSet(self, set, seqLength):
+    # Method transforms each element in dataset from a set of kmers, to an array with a numerical
+    # representation of each kmer.
+    def __prepareTrainingSet(self, set):
         training_set = []
-        for elem in set:
+        seqLength = self.__findLongestList(set)
+        for elem in set: #Go through each sequence
             temp = [0] * seqLength
-            for index in range(seqLength - 1):
-                kmer_num = self.__dictionary.get(elem[index])
-                if kmer_num != None:
-                  temp[index] = kmer_num
-                else:
+            for index in range(seqLength - 1): # Go through each kmer in sequence
+                try: #Replace kmer with number from dictionary
+                    kmer_num = self.__dictionary.get(elem[index])
+                    if kmer_num != None:
+                       temp[index] = kmer_num
+                    else:
+                       temp[index] = 0
+                except:
                     temp[index] = 0
             training_set.append(temp)
         training_set = np.array(training_set, dtype=np.float)
         training_set = training_set / 255.0
         return training_set
+
+    # Method takes a list of lists and returns the length of the longest list.
+    def __findLongestList(self, lists):
+        longestLength = 0
+        for list in lists:
+            if len(list) > longestLength:
+                longestLength = len(list)
+        return longestLength
 
 
     # METHODS USED TO CREATE K-MER DICTIONARY
