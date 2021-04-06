@@ -21,13 +21,14 @@ training_labels = dataset.getTrainingLabels()
 # Create neural network
 
 input_shape = len(training_set[0])
+labels = len(training_labels)
 
 # 68 hvis 100 runder
 basic_model = Sequential([
     layers.Flatten(input_shape=(input_shape,)),
     layers.Dense(100, activation='relu'),
     layers.Dense(400, activation='relu'),
-    layers.Dense(101)
+    layers.Dense(labels + 1)
 ])
 
 #67 etter 100, læring flater ut etter dette.
