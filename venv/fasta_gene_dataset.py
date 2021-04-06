@@ -15,8 +15,8 @@ class FastaGeneDataset:
 
     def __init__(self, kmerLength):
         #Open each database file
-        path = "../dataset/"
-        for file in os.listdir("../test_dataset"):
+        path = "../database/"
+        for file in os.listdir("../database"):
             fullpath = os.path.join(path, file)
             unzipped = gzip.open(fullpath, "rt")
             contents = unzipped.readline()
