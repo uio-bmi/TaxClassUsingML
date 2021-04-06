@@ -4,40 +4,59 @@
 import numpy as np
 from Tools.dictionary import Dictionary
 from Tools.set_manipulation import SetManupulation
+import os
+import gzip
+
 
 class FastaGeneDataset:
     __trainingSet = []
     __trainingLabels = []
+    __numberOfKmers = 0
 
-    def __init__(self, file, kmerLength):
-        # Create list with all elements in file.
-        dataset = file.read().split(">")
-        dataset.pop(0)
-        dataset = dataset[:100]
+    def __init__(self, kmerLength):
+        #Open each database file
+        path = "../dataset/"
+        for file in os.listdir("../test_dataset"):
+            fullpath = os.path.join(path, file)
+            unzipped = gzip.open(fullpath, "rt")
+            contents = unzipped.readline()
+            temp = ""
+            seq = {}
+            labels = []
+            #Go through each line in file and to seq variable.
+            while contents != "":
+                if ">" in contents: #Find label
+                    temp = str.lstrip(contents)
+                    labels.append(temp)
+                    seq[temp] = ""
+                else: #DNA sequence
+                    seq[temp] += str.lstrip(contents)
+                contents = unzipped.readline()
+            unzipped.close()
 
         # Initialize dictionaries
-        kmerDictionary = Dictionary(True) # To hold all kmers
-        labelDictionary = Dictionary(False) # To hold all labels
+        kmerDictionary = Dictionary(True)  # To hold all kmers
+        labelDictionary = Dictionary(False)  # To hold all labels
 
-        for elem in dataset:
-            temp = elem.split("\n")
-
+        for elem in labels:
             # Add element to training set and label set
-            self.__trainingLabels.append(float(temp[0]))
-            self.__trainingSet.append(self.__seqToKmers(temp[1], kmerLength))
+            self.__trainingLabels.append(elem)
+            self.__trainingSet.append(self.__seqToKmers(seq[elem], kmerLength))
 
-            # Add values to dictionaries
-            kmers = self.__seqToKmers(temp[1], kmerLength)
+            # Add data to dictionaries
+            kmers = self.__seqToKmers(seq[elem], kmerLength)
             kmerDictionary.addSetToCounterDictionary(kmers)
-            labelDictionary.addToIndexDictionary(float(temp[0]))
+            labelDictionary.addToIndexDictionary(elem)
 
         # Remove common kmers from dictionary
-        kmerDictionary.counterDictionaryCommonalityThresholdRemoval(50)
+        kmerDictionary.counterDictionaryCommonalityThresholdRemoval(75)
         kmerDictionary.addSetToDictionary(kmerDictionary.getCounterDictionary())
+        self.__numberOfKmers = kmerDictionary.getDictionaryLength()
 
         # Format training and label sets.
         self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, kmerDictionary.getIndexDictionary())
         self.__trainingLabels = self.__prepareLabelSet(self.__trainingLabels, labelDictionary.getIndexDictionary())
+
 
 
     # Method returns all training sequences.
@@ -55,6 +74,9 @@ class FastaGeneDataset:
     # Method returns a specific answer from the label set.
     def getTrainingLabel(self, index):
         return self.__trainingLabels[index]
+
+    def getTotalNumberOfKmers(self):
+        return self.__numberOfKmers
 
     # Method transforms a DNA sequence into list of k-mers of given length.
     @staticmethod
@@ -92,8 +114,11 @@ class FastaGeneDataset:
     # been encoded.
     def __prepareLabelSet(self, trainingLabels, labelDictionary):
         labels = []
+        index = 0
         for label in trainingLabels:
             temp = labelDictionary[label]
+            temp = index
             labels.append(temp)
+            index += 1
         labels = np.array(labels, dtype=np.float)
         return labels

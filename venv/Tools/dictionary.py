@@ -14,6 +14,9 @@ class Dictionary:
             self.__counterDictionary["None"] = 0
 
 
+    def getDictionaryLength(self):
+        return len(self.__indexDictionary)
+
     # METHODS FOR COUNTER DICTIONARY
 
     # Method returns the counter dictionary.
