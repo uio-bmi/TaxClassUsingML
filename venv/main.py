@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
@@ -63,7 +65,7 @@ model.compile(optimizer='adam',
               )
 
 # Train model
-model.fit(training_set, training_labels, epochs=10)
+model.fit(training_set, training_labels, epochs=100)
 
 # Check model accuracy
 test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)
