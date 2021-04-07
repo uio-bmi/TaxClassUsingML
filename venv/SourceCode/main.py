@@ -8,6 +8,11 @@ from tensorflow.keras import Sequential
 from tensorflow.keras import layers
 import numpy as np
 from fasta_gene_dataset import FastaGeneDataset
+from PreProcessing.trash_remover import TrashRemover
+
+TrashRemover.clean()
+
+
 
 # Use FASTA file to create a dataset object.
 dataset = FastaGeneDataset(31)
@@ -32,32 +37,30 @@ basic_model = Sequential([
 ])
 
 #67 etter 100, læring flater ut etter dette.
-basic_model2 = Sequential([
-    layers.Dense(100, input_shape=(input_shape,), activation='relu'),
-    layers.Dense(400, activation='relu'),
-    layers.Dense(400, activation='relu'),
-    layers.Dense(101)
-])
+#basic_model2 = Sequential([
+#    layers.Dense(100, input_shape=(input_shape,), activation='relu'),
+#    layers.Dense(400, activation='relu'),
+#    layers.Dense(400, activation='relu'),
+#    layers.Dense(101)
+#])
 
-
-total_num_words = dataset.getTotalNumberOfKmers()
+#total_num_words = dataset.getTotalNumberOfKmers()
 
 # 50 hvis 1000 runder
-cnn_model = tf.keras.Sequential([
-    layers.Embedding(input_dim=total_num_words, output_dim=100),
-    layers.Conv1D(128, 5, activation='relu'),
-    layers.AveragePooling1D(pool_size=2, padding='valid'),
-    layers.Conv1D(128, 5, activation='relu'),
-    layers.AveragePooling1D(pool_size=2, padding='valid'),
-    layers.Dense(64, activation='relu'),
-    layers.GlobalAveragePooling1D(),
-    layers.Dense(101, activation='softmax')
-])
+#cnn_model = tf.keras.Sequential([
+#    layers.Embedding(input_dim=total_num_words, output_dim=100),
+#    layers.Conv1D(128, 5, activation='relu'),
+#    layers.AveragePooling1D(pool_size=2, padding='valid'),
+#    layers.Conv1D(128, 5, activation='relu'),
+#    layers.AveragePooling1D(pool_size=2, padding='valid'),
+#    layers.Dense(64, activation='relu'),
+#    layers.GlobalAveragePooling1D(),
+#    layers.Dense(101, activation='softmax')
+#])
 
 model = basic_model
 
 model.summary()
-
 
 # Build model
 model.compile(optimizer='adam',
@@ -66,7 +69,7 @@ model.compile(optimizer='adam',
               )
 
 # Train model
-model.fit(training_set, training_labels, epochs=100)
+model.fit(training_set, training_labels, epochs=10)
 
 # Check model accuracy
 test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)
