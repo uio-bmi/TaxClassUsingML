@@ -30,16 +30,21 @@ class Dictionary:
 
     # Method adds a key to the counter dictionary.
     def __addToCounterDictionary(self, key):
+        #Check for the key and the mirror of the key
         if key in self.__counterDictionary:
             self.__counterDictionary[key] += 1
+        elif key[::-1] in self.__counterDictionary:
+            self.__counterDictionary[key[::-1]] += 1
         else:
             self.__counterDictionary[key] = 1
 
-    # Method removes elements from counter dictionary if the counter is above the given treshold.
+    # Method removes elements from counter dictionary if the counter is above the given percentage treshold.
     def counterDictionaryCommonalityThresholdRemoval(self, commonalityTreshold):
         toBeDeleted = []
-        for elem in self.__counterDictionary.keys():
-            if self.__counterDictionary.get(elem) > commonalityTreshold:
+        all_keys = self.__counterDictionary.keys()
+        threshold = abs((len(all_keys) / 100) * commonalityTreshold)
+        for key in all_keys:
+            if self.__counterDictionary.get(key) > threshold:
                 toBeDeleted.append(elem)
         for elemToBeDeleted in toBeDeleted:
             del self.__counterDictionary[elemToBeDeleted]
