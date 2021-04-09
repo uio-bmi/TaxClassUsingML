@@ -14,25 +14,30 @@ class FastaGeneDataset:
     __numberOfKmers = 0
 
     def __init__(self, kmerLength):
+        print("Creating database...")
         #Open each database file
-        path = "../database/"
-        for file in os.listdir("../database"):
+        path = "../Data/database/"
+        print("Database: Reading files...")
+        for file in os.listdir(path):
             fullpath = os.path.join(path, file)
-            unzipped = gzip.open(fullpath, "rt")
-            contents = unzipped.readline()
-            temp = ""
-            seq = {}
-            labels = []
-            #Go through each line in file and to seq variable.
-            while contents != "":
-                if ">" in contents: #Find label
+            try:
+             unzipped = gzip.open(fullpath, "rt")
+             contents = unzipped.readline()
+             temp = ""
+             seq = {}
+             labels = []
+             #Go through each line in file and to seq variable.
+             while contents != "":
+                 if ">" in contents: #Find label
                     temp = str.lstrip(contents)
                     labels.append(temp)
                     seq[temp] = ""
-                else: #DNA sequence
+                 else: #DNA sequence
                     seq[temp] += str.lstrip(contents)
-                contents = unzipped.readline()
-            unzipped.close()
+                 contents = unzipped.readline()
+             unzipped.close()
+            except:
+                to = 1 + 1
 
         # Initialize dictionaries
         kmerDictionary = Dictionary(True)  # To hold all kmers
@@ -56,6 +61,7 @@ class FastaGeneDataset:
         # Format training and label sets.
         self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, kmerDictionary.getIndexDictionary())
         self.__trainingLabels = self.__prepareLabelSet(self.__trainingLabels, labelDictionary.getIndexDictionary())
+        print("Finished creating database")
 
 
 
