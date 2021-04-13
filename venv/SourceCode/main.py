@@ -12,8 +12,6 @@ from PreProcessing.trash_remover import TrashRemover
 
 TrashRemover.clean()
 
-
-
 # Use FASTA file to create a dataset object.
 dataset = FastaGeneDataset(31)
 
