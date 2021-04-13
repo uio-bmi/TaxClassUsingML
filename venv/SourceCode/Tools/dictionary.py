@@ -13,6 +13,9 @@ class Dictionary:
         if useCounterDictionary:
             self.__counterDictionary["None"] = 0
 
+    # Method returns the length of the index dictionary,
+    def len(self):
+        return len(self.__indexDictionary)
 
     def getDictionaryLength(self):
         return len(self.__indexDictionary)

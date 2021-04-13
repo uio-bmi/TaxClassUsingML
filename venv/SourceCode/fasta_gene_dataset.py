@@ -4,11 +4,9 @@
 import numpy as np
 from Tools.dictionary import Dictionary
 from Tools.set_manipulation import SetManupulation
-from PreProcessing.label_finder import LabelFinder
 from PreProcessing.data_reader import DataReader
 import os
 import gzip
-
 
 class FastaGeneDataset:
     __trainingSet = []
@@ -17,24 +15,27 @@ class FastaGeneDataset:
     def __init__(self, kmerLength):
 
         # Read database
-        data = DataReader.readDatabase()
-        labels = data[0] #All species labels
-        seq = data[1] #All DNA sequences
+        data = DataReader.readDataFiles()
+        filenames = data[0] #Array with all filenames
+        seq = data[1] #Set with format: { filename: { DNA scaffolds } }
+        species_labels = DataReader.readSpeciesNames() #Set with format: { filename: species }
 
         # Initialize dictionaries
         kmerDictionary = Dictionary(True)  # To hold all kmers
-        labelDictionary = Dictionary(False)  # To hold all labels
+        speciesDictionary = Dictionary(False)  # To hold all labels
+        for species in species_labels:
+            speciesDictionary.addToIndexDictionary(species_labels[species])
 
-        for label in labels:
-            for scaffold in seq[label]:
-             # Cut kmers
-             kmers = self.__seqToKmers(scaffold, kmerLength)
+        for filename in filenames:
+            for scaffold in seq[filename]:
+              #Cut kmers
+              arr_of_kmers = self.__seqToKmers(scaffold, kmerLength)
 
-             # Add lables and sequences to training data and overview dictionaries
-             self.__trainingLabels.append(label)
-             self.__trainingSet.append(kmers)
-             kmerDictionary.addSetToCounterDictionary(kmers)
-             labelDictionary.addToIndexDictionary(label)
+              #Add data to training sets
+              self.__trainingLabels.append(species_labels[filename])
+              self.__trainingSet.append(arr_of_kmers)
+
+              kmerDictionary.addSetToCounterDictionary(arr_of_kmers)
 
         # Remove common kmers from index dictionary
         kmerDictionary.counterDictionaryCommonalityThresholdRemoval(75)
@@ -42,9 +43,7 @@ class FastaGeneDataset:
 
         # Format training and label sets.
         self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, kmerDictionary.getIndexDictionary())
-        self.__trainingLabels = self.__prepareLabelSet(self.__trainingLabels, labelDictionary.getIndexDictionary())
-        print(len(self.__trainingLabels))
-        print(len(self.__trainingSet))
+        self.__trainingLabels = self.__prepareLabelSet(self.__trainingLabels, speciesDictionary.getIndexDictionary())
 
 
 
@@ -109,6 +108,7 @@ class FastaGeneDataset:
         print("Re-formatting training labels...")
         labels = []
         for label in trainingLabels:
+            print(label)
             labels.append(labelDictionary[label])
         labels = np.array(labels, dtype=np.float)
         print("Finished re-formatting training labels")

@@ -19,6 +19,8 @@ dataset = FastaGeneDataset(31)
 training_set = dataset.getTrainingSet()
 training_labels = dataset.getTrainingLabels()
 
+print("tr", len(training_labels))
+
 
 
 # Create neural network
@@ -31,7 +33,7 @@ basic_model = Sequential([
     layers.Flatten(input_shape=(input_shape,)),
     layers.Dense(100, activation='relu'),
     layers.Dense(400, activation='relu'),
-    layers.Dense(labels + 1)
+    layers.Dense(31911)
 ])
 
 #67 etter 100, læring flater ut etter dette.
