@@ -66,7 +66,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy']
               )
 # Train model
-model.fit(training_set, training_labels, epochs=100)
+model.fit(training_set, training_labels, epochs=10)
 
 # Check model accuracy
 test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)
@@ -83,7 +83,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy']
               )
 # Train model
-model.fit(training_set, training_labels, epochs=100)
+model.fit(training_set, training_labels, epochs=10)
 
 # Check model accuracy
 test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)
@@ -100,7 +100,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy']
               )
 # Train model
-model.fit(training_set, training_labels, epochs=100)
+model.fit(training_set, training_labels, epochs=10)
 
 # Check model accuracy
 test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)
