@@ -19,57 +19,88 @@ dataset = FastaGeneDataset(31)
 training_set = dataset.getTrainingSet()
 training_labels = dataset.getTrainingLabels()
 
-print("tr", len(training_labels))
-
-
-
 # Create neural network
 
 input_shape = len(training_set[0])
 labels = len(training_labels)
+
+species = 31911
 
 # 68 hvis 100 runder
 basic_model = Sequential([
     layers.Flatten(input_shape=(input_shape,)),
     layers.Dense(100, activation='relu'),
     layers.Dense(400, activation='relu'),
-    layers.Dense(31911)
+    layers.Dense(species)
 ])
 
 #67 etter 100, læring flater ut etter dette.
-#basic_model2 = Sequential([
-#    layers.Dense(100, input_shape=(input_shape,), activation='relu'),
-#    layers.Dense(400, activation='relu'),
-#    layers.Dense(400, activation='relu'),
-#    layers.Dense(101)
-#])
+basic_model2 = Sequential([
+    layers.Dense(100, input_shape=(input_shape,), activation='relu'),
+    layers.Dense(400, activation='relu'),
+    layers.Dense(400, activation='relu'),
+    layers.Dense(species)
+])
 
-#total_num_words = dataset.getTotalNumberOfKmers()
+total_num_words = dataset.getTotalCountKmers()
 
 # 50 hvis 1000 runder
-#cnn_model = tf.keras.Sequential([
-#    layers.Embedding(input_dim=total_num_words, output_dim=100),
-#    layers.Conv1D(128, 5, activation='relu'),
-#    layers.AveragePooling1D(pool_size=2, padding='valid'),
-#    layers.Conv1D(128, 5, activation='relu'),
-#    layers.AveragePooling1D(pool_size=2, padding='valid'),
-#    layers.Dense(64, activation='relu'),
-#    layers.GlobalAveragePooling1D(),
-#    layers.Dense(101, activation='softmax')
-#])
+cnn_model = tf.keras.Sequential([
+    layers.Embedding(input_dim=total_num_words, output_dim=100),
+    layers.Conv1D(128, 5, activation='relu'),
+    layers.AveragePooling1D(pool_size=2, padding='valid'),
+    layers.Conv1D(128, 5, activation='relu'),
+    layers.AveragePooling1D(pool_size=2, padding='valid'),
+    layers.Dense(64, activation='relu'),
+    layers.GlobalAveragePooling1D(),
+    layers.Dense(species, activation='softmax')
+])
 
 model = basic_model
 
-model.summary()
+#model.summary()
 
 # Build model
 model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy']
               )
-
 # Train model
-model.fit(training_set, training_labels, epochs=10)
+model.fit(training_set, training_labels, epochs=100)
+
+# Check model accuracy
+test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)
+print('\nModel accuracy: ', test_acc)
+print('\nModel loss: ', test_loss)
+
+model = basic_model2
+
+#model.summary()
+
+# Build model
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy']
+              )
+# Train model
+model.fit(training_set, training_labels, epochs=100)
+
+# Check model accuracy
+test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)
+print('\nModel accuracy: ', test_acc)
+print('\nModel loss: ', test_loss)
+
+model = cnn_model
+
+#model.summary()
+
+# Build model
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy']
+              )
+# Train model
+model.fit(training_set, training_labels, epochs=100)
 
 # Check model accuracy
 test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)

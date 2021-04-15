@@ -11,6 +11,7 @@ import gzip
 class FastaGeneDataset:
     __trainingSet = []
     __trainingLabels = []
+    __totalCountKmers = 0
 
     def __init__(self, kmerLength):
 
@@ -40,12 +41,15 @@ class FastaGeneDataset:
         # Remove common kmers from index dictionary
         kmerDictionary.counterDictionaryCommonalityThresholdRemoval(75)
         kmerDictionary.addSetToDictionary(kmerDictionary.getCounterDictionary())
+        self.__totalCountKmers = kmerDictionary.len()
 
         # Format training and label sets.
         self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, kmerDictionary.getIndexDictionary())
         self.__trainingLabels = self.__prepareLabelSet(self.__trainingLabels, speciesDictionary.getIndexDictionary())
 
-
+    # Method returns the total number of kmers.
+    def getTotalCountKmers(self):
+        return self.__totalCountKmers
 
     # Method returns all training sequences.
     def getTrainingSet(self):
