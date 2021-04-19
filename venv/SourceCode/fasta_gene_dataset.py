@@ -17,6 +17,7 @@ class FastaGeneDataset:
     __testSet = []
     __testLabels = []
     __totalCountKmers = 0
+    __test_set_percentage = 30
 
     def __init__(self, kmerLength):
 
@@ -49,11 +50,9 @@ class FastaGeneDataset:
         self.__totalCountKmers = kmerDictionary.len()
 
         # Divide training set into training and test sets
-        temp = GenerateTestSet.getDividedSets(self.__trainingSet, self.__trainingLabels)
+        temp = self.__getDividedSets()
         self.__testSet = temp[0]
         self.__testLabels = temp[1]
-        self.__trainingSet = temp[2]
-        self.__trainingLabels = temp[3]
 
         # Format training and label sets.
         print("Re-formatting training and test set...")
@@ -93,6 +92,18 @@ class FastaGeneDataset:
     def getTestLabels(self):
         return self.__testLabels
 
+    # Method takes a training set and returns test and training sets.
+    def __getDividedSets(self):
+        test_set_size = math.ceil((len(self.__trainingSet) / 100) * self.__test_set_percentage)
+        testSet = []
+        testLabels = []
+        for i in range(test_set_size):
+            test_element = random.randrange(len(self.__trainingSet))
+            testSet.append(self.__trainingSet[test_element])
+            testLabels.append(self.__trainingLabels[test_element])
+            self.__trainingSet.pop(test_element)
+            self.__trainingLabels.pop(test_element)
+        return [testSet, testLabels]
 
     # Method transforms a DNA sequence into an array of k-mers of given length.
     @staticmethod
