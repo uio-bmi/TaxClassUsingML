@@ -18,15 +18,16 @@ dataset = FastaGeneDataset(31)
 # Prepare training set and training labels.
 training_set = dataset.getTrainingSet()
 training_labels = dataset.getTrainingLabels()
+test_set = dataset.getTestSet()
+test_labels = dataset.getTestLabels()
 
 # Create neural network
-
 input_shape = len(training_set[0])
 labels = len(training_labels)
 
 species = 31911
 
-# 68 hvis 100 runder
+# 10 runder liten database: 88
 basic_model = Sequential([
     layers.Flatten(input_shape=(input_shape,)),
     layers.Dense(100, activation='relu'),
@@ -34,7 +35,7 @@ basic_model = Sequential([
     layers.Dense(species)
 ])
 
-#67 etter 100, læring flater ut etter dette.
+#10 runder liten database: 86
 basic_model2 = Sequential([
     layers.Dense(100, input_shape=(input_shape,), activation='relu'),
     layers.Dense(400, activation='relu'),
@@ -44,7 +45,7 @@ basic_model2 = Sequential([
 
 total_num_words = dataset.getTotalCountKmers()
 
-# 50 hvis 1000 runder
+#10 runder liten database: 30
 cnn_model = tf.keras.Sequential([
     layers.Embedding(input_dim=total_num_words, output_dim=100),
     layers.Conv1D(128, 5, activation='relu'),
@@ -69,7 +70,7 @@ model.compile(optimizer='adam',
 model.fit(training_set, training_labels, epochs=10)
 
 # Check model accuracy
-test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)
+test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
 print('\nModel accuracy: ', test_acc)
 print('\nModel loss: ', test_loss)
 
@@ -86,7 +87,7 @@ model.compile(optimizer='adam',
 model.fit(training_set, training_labels, epochs=10)
 
 # Check model accuracy
-test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)
+test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
 print('\nModel accuracy: ', test_acc)
 print('\nModel loss: ', test_loss)
 
@@ -103,7 +104,7 @@ model.compile(optimizer='adam',
 model.fit(training_set, training_labels, epochs=10)
 
 # Check model accuracy
-test_loss, test_acc = model.evaluate(training_set, training_labels, verbose=2)
+test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
 print('\nModel accuracy: ', test_acc)
 print('\nModel loss: ', test_loss)
 

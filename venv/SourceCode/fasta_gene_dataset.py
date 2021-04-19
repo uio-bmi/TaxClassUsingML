@@ -1,16 +1,21 @@
 # This class is used to prepare the dataset for training by transforming it to a more workable format.
 # This includes standardizing the DNA sequences for more convenient comparison.
+import math
+import random
 
 import numpy as np
 from Tools.dictionary import Dictionary
 from Tools.set_manipulation import SetManupulation
 from PreProcessing.data_reader import DataReader
+from PreProcessing.generate_test_set import GenerateTestSet
 import os
 import gzip
 
 class FastaGeneDataset:
     __trainingSet = []
     __trainingLabels = []
+    __testSet = []
+    __testLabels = []
     __totalCountKmers = 0
 
     def __init__(self, kmerLength):
@@ -43,9 +48,22 @@ class FastaGeneDataset:
         kmerDictionary.addSetToDictionary(kmerDictionary.getCounterDictionary())
         self.__totalCountKmers = kmerDictionary.len()
 
+        # Divide training set into training and test sets
+        temp = GenerateTestSet.getDividedSets(self.__trainingSet, self.__trainingLabels)
+        self.__testSet = temp[0]
+        self.__testLabels = temp[1]
+        self.__trainingSet = temp[2]
+        self.__trainingLabels = temp[3]
+
         # Format training and label sets.
-        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, kmerDictionary.getIndexDictionary())
+        print("Re-formatting training and test set...")
+        seqLength = SetManupulation.findLongestList(self.__trainingSet)
+        self.__trainingSet = self.__prepareTrainingSet(self.__trainingSet, kmerDictionary.getIndexDictionary(), seqLength)
         self.__trainingLabels = self.__prepareLabelSet(self.__trainingLabels, speciesDictionary.getIndexDictionary())
+        self.__testSet = self.__prepareTrainingSet(self.__testSet, kmerDictionary.getIndexDictionary(), seqLength)
+        self.__testLabels = self.__prepareLabelSet(self.__testLabels, speciesDictionary.getIndexDictionary())
+        print("Finished formating training and test set")
+
 
     # Method returns the total number of kmers.
     def getTotalCountKmers(self):
@@ -67,6 +85,14 @@ class FastaGeneDataset:
     def getTrainingLabel(self, index):
         return self.__trainingLabels[index]
 
+    # Method returns the test set for the dataset.
+    def getTestSet(self):
+        return self.__testSet
+
+    # Method returns the test labels for the dataset.
+    def getTestLabels(self):
+        return self.__testLabels
+
 
     # Method transforms a DNA sequence into an array of k-mers of given length.
     @staticmethod
@@ -82,10 +108,8 @@ class FastaGeneDataset:
         return kmer_sequences
 
     # Method transforms the training set replacing each element with a numerical representation.
-    def __prepareTrainingSet(self, set, kmerDictionary):
-        print("Re-formatting training set...")
+    def __prepareTrainingSet(self, set, kmerDictionary, seqLength):
         training_set = []
-        seqLength = SetManupulation.findLongestList(set)
         for elem in set: #Go through each sequence
             temp = [0] * seqLength
             for index in range(seqLength - 1): # Go through each kmer in sequence
@@ -103,17 +127,13 @@ class FastaGeneDataset:
             training_set.append(temp)
         training_set = np.array(training_set, dtype=np.float)
         training_set = training_set / 255.0
-        print("Finished re-formatting training set")
         return training_set
 
     # Method takes a set of labels and returns a numpy array where each label has
     # been encoded.
     def __prepareLabelSet(self, trainingLabels, labelDictionary):
-        print("Re-formatting training labels...")
         labels = []
         for label in trainingLabels:
-            print(label)
             labels.append(labelDictionary[label])
         labels = np.array(labels, dtype=np.float)
-        print("Finished re-formatting training labels")
         return labels
