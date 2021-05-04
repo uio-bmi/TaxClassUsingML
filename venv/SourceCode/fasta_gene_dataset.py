@@ -7,10 +7,10 @@ import numpy as np
 from Tools.dictionary import Dictionary
 from Tools.set_manipulation import SetManupulation
 from PreProcessing.data_reader import DataReader
-from PreProcessing.generate_test_set import GenerateTestSet
 import os
 import gzip
 
+# This class counts k-mers and prepares a training and test set.
 class FastaGeneDataset:
     __trainingSet = []
     __trainingLabels = []
