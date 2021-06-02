@@ -7,23 +7,33 @@ from tensorflow import keras
 from tensorflow.keras import Sequential
 from tensorflow.keras import layers
 import numpy as np
-from fasta_gene_dataset import FastaGeneDataset
-from PreProcessing.trash_remover import TrashRemover
-from PreProcessing.Inputs.minhash_input import MinHashInput
+from Cleaning.trash_remover import TrashRemover
+from RepresentationApproaches.SketchSignatures.minhash_input import MinHashInput
+from RepresentationApproaches.UniqueKmers.unique_kmer_selector import UniqueKmerSelector
 
-training_set = MinHashInput.getTrainingSet()
+selector = UniqueKmerSelector()
+uniq = selector.findUniqueKmers()
 
-training_labels = []
-for i in range(0, len(training_set)):
-    training_labels.append(float(i))
+count = 0
+for key in uniq.keys():
+    print("key ", key)
+    print(uniq[key])
+    count = count + 1
+    if count == 5:
+        break
 
-training_labels = np.array(training_labels, dtype=np.float)
 
-print(training_set[0][0])
+temp = MinHashInput.getTrainingSet()
+matrix = temp[0]
+labels = temp[1]
+
+training_set = matrix
+training_labels = labels
 
 input_shape = len(training_set[0])
+
 species = 31911
-species = len(training_labels)
+species = len(training_labels) + 1
 test_set = training_set
 test_labels = training_labels
 
@@ -65,10 +75,12 @@ total_num_words = 65000
 #])
 
 
-# Check model accuracy
-test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
-print('\nModel accuracy: ', test_acc)
-print('\nModel loss: ', test_loss)
+#cnn_model = tf.keras.Sequential([
+#    layers.Conv1D(filters=1, kernel_size=1, activation="relu", input_shape=(1, 11), name="dette"),
+#    layers.Dense(species, activation="softmax")
+#])
+
+
 
 model = basicer_model
 
