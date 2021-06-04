@@ -1,2 +1,7 @@
 /venv/gg_12_10.fasta
-/database
+/venv/SourceCode/Database/
+/venv/SourceCode/RepresentationApproaches/UniqueKmers/Counts/
+/venv/SourceCode/Cleaning/genome_metadata.tsv
+/venv/SourceCode/RepresentationApproaches/SketchSignatures/compare-demo
+/venv/SourceCode/RepresentationApproaches/SketchSignatures/compare-demo.labels.txt
+/venv/SourceCode/gtdb_taxonomy.tsv
