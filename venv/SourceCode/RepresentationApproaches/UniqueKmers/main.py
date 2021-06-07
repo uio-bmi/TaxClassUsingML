@@ -7,5 +7,5 @@ from unique_kmer_selector import UniqueKmerSelector
 
 selector = UniqueKmerSelector()
 unique_kmers = selector.getUniqueKmers()
-print(len(unique_kmers))
+print("Unique kmers: ", len(unique_kmers))
 UniqueKmerSelector.writeKmersToFile(unique_kmers)

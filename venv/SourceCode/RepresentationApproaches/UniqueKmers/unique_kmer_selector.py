@@ -24,6 +24,7 @@ class UniqueKmerSelector:
                     if line.find(">"):
                         self.__addToDictionary(line)
         print("Finished finding unique kmers")
+        print("Useless kmers: ", len(self.useless_kmers))
         return self.unique_kmers
 
     # Method takes an array of kmers and writes them to a file.
