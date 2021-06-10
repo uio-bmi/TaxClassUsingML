@@ -20,7 +20,7 @@ class TrashRemover:
  # complete enough to be used for training.
  @staticmethod
  def __getListOfPoorQualityDataObjects():
-   metadata_file = open("./SourceCode/Cleaning/genome_metadata.tsv", encoding="utf8")
+   metadata_file = open("./genome_metadata.tsv", encoding="utf8")
    meta_reader = csv.reader(metadata_file, delimiter="\t", quotechar='"')
    next(meta_reader) #Remove table header
    trash = []
@@ -36,7 +36,6 @@ class TrashRemover:
  # Method deletes the files which cannot be used for training.
  @staticmethod
  def __removeTrashFiles(trash_files):
-    print(os.getcwd())
     for trashFile in trash_files:
         try:
            os.replace("./Database/" + trashFile[0] + "_genomic.fna.gz",
