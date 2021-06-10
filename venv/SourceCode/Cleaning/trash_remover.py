@@ -39,7 +39,7 @@ class TrashRemover:
     print(os.getcwd())
     for trashFile in trash_files:
         try:
-           os.replace("./SourceCode/Database/" + trashFile[0] + "_genomic.fna.gz",
-                      "./SourceCode/Cleaning/UselessData/" + trashFile[0] + "_genomic.fna.gz")
+           os.replace("./Database/" + trashFile[0] + "_genomic.fna.gz",
+                      "./UselessData/" + trashFile[0] + "_genomic.fna.gz")
         except:
            trash_files.remove(trashFile)
