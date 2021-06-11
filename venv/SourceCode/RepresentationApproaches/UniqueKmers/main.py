@@ -6,6 +6,4 @@ from unique_kmer_selector import UniqueKmerSelector
 # UniqueKmerSelector.
 
 selector = UniqueKmerSelector()
-unique_kmers = selector.getUniqueKmers()
-print("Unique kmers: ", len(unique_kmers))
-UniqueKmerSelector.writeKmersToFile(unique_kmers)
+selector.stripFiles()
