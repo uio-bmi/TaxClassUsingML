@@ -6,4 +6,5 @@ from unique_kmer_selector import UniqueKmerSelector
 # UniqueKmerSelector.
 
 selector = UniqueKmerSelector()
+selector.prepareFiles()
 selector.stripFiles()
