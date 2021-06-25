@@ -19,7 +19,7 @@ class UniqueKmerSelector:
 
     # Method goes through a file and adds every kmer to the class dictionaries.
     def __findUselessKmersInFile(self, file):
-        with open(file, "rt") as f:
+        with gzip.open(file, "rt") as f:
             for line in f:
                 if line.find(">"):
                     self.__addToDictionary(line.rstrip("\n"))
@@ -78,7 +78,7 @@ class UniqueKmerSelector:
     # Method replaces old file with a new file where the useless kmers are gone.
     def __removeUselessKmers(self, file):
         clean_file = open(file + "_temp.fna.gz", "w+") #Create replacement file
-        file = open(file, "rt")
+        file = gzip.open(file, "rt")
         content_arr = file.read().split(">")
         for elem in content_arr:
             try:
