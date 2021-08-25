@@ -9,18 +9,19 @@ from tensorflow.keras import layers
 import numpy as np
 from Cleaning.trash_remover import TrashRemover
 from RepresentationApproaches.SketchSignatures.minhash_input import MinHashInput
-from RepresentationApproaches.UniqueKmers.unique_kmer_selector import UniqueKmerSelector
+#from RepresentationApproaches.UniqueKmers.unique_kmer_selector import UniqueKmerSelector
 
-selector = UniqueKmerSelector()
-uniq = selector.findUniqueKmers()
+#selector = UniqueKmerSelector()
+#uniq = selector.findUniqueKmers()
 
-count = 0
-for key in uniq.keys():
-    print("key ", key)
-    print(uniq[key])
-    count = count + 1
-    if count == 5:
-        break
+
+#count = 0
+#for key in uniq.keys():
+#    print("key ", key)
+#    print(uniq[key])
+#    count = count + 1
+#    if count == 5:
+#        break
 
 
 temp = MinHashInput.getTrainingSet()
