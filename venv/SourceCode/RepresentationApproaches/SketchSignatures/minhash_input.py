@@ -2,6 +2,7 @@ import numpy as np
 import sourmash
 from sourmash import fig
 import csv
+import pandas as pd
 
 # This class fetches signatures created using MinHash.
 class MinHashInput:
@@ -12,7 +13,7 @@ class MinHashInput:
    def getTrainingSet():
        print("Preparing MinHash training set...")
        speciesNames = MinHashInput.__readSpeciesNames()
-       matrix, labels = fig.load_matrix_and_labels("./SourceCode/RepresentationApproaches/SketchSignatures/compare-demo")
+       matrix, labels = fig.load_matrix_and_labels("./compare-demo")
 
        #Transform label names to species names.
        for index, label in enumerate(labels):
@@ -29,9 +30,12 @@ class MinHashInput:
                labels[index] = len(speciesDictionary)
                speciesDictionary[species] = len(speciesDictionary)
        labels = np.array(labels, dtype=float)
+       labels = labels / 255.0
 
-       print("Finished preparing MinHash training set")
-       return [matrix, labels]
+       print("Saving to csv")
+       pd.DataFrame(matrix).to_csv("./data.csv", header=None, index=None)
+       pd.DataFrame(labels).to_csv("./data_labels.csv", header=None, index=None)
+       print("Finished preparing MinHash dataset")
 
 
    # Method reads the species label for each file in the database and transfers
@@ -39,7 +43,7 @@ class MinHashInput:
    @staticmethod
    def __readSpeciesNames():
        labels = {}
-       labels_file = open("./SourceCode/gtdb_taxonomy.tsv", encoding="utf8")
+       labels_file = open("./gtdb_taxonomy.tsv", encoding="utf8")
        label_reader = csv.reader(labels_file, delimiter="\t", quotechar='"')
        for row in label_reader:
            labels[row[0].replace("GB_", "").replace("RS_", "")] = row[1]

@@ -10,6 +10,7 @@ import numpy as np
 from Cleaning.trash_remover import TrashRemover
 from RepresentationApproaches.SketchSignatures.minhash_input import MinHashInput
 #from RepresentationApproaches.UniqueKmers.unique_kmer_selector import UniqueKmerSelector
+from Models.basic_neural import BasicModel
 
 #selector = UniqueKmerSelector()
 #uniq = selector.findUniqueKmers()
@@ -39,11 +40,11 @@ test_set = training_set
 test_labels = training_labels
 
 basicer_model = Sequential([
-    layers.Flatten(input_shape=(input_shape,)),
-    layers.Dense(50, activation='relu'),
-    layers.Dense(50, activation='relu'),
-    layers.Dense(species)
-])
+               layers.Flatten(input_shape=(input_shape,)),
+               layers.Dense(50, activation='relu'),
+               layers.Dense(50, activation='relu'),
+               layers.Dense(species)
+        ])
 
 # 10 runder liten database: 88
 basic_model = Sequential([
