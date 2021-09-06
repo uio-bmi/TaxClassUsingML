@@ -1,7 +1,6 @@
 import os
 import gzip
 
-
 class UniqueKmerSelector:
     unique_kmers = {}
     useless_kmers = {} #kmers which exist in more than one file

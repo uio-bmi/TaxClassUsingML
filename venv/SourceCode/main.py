@@ -7,64 +7,29 @@ from tensorflow import keras
 from tensorflow.keras import Sequential
 from tensorflow.keras import layers
 import numpy as np
-from Cleaning.trash_remover import TrashRemover
-from RepresentationApproaches.SketchSignatures.minhash_input import MinHashInput
-#from RepresentationApproaches.UniqueKmers.unique_kmer_selector import UniqueKmerSelector
-from Models.basic_neural import BasicModel
+import pandas as pd
+from Models.basic_neural import NeuralNetworks
 
-#selector = UniqueKmerSelector()
-#uniq = selector.findUniqueKmers()
-
-
-#count = 0
-#for key in uniq.keys():
-#    print("key ", key)
-#    print(uniq[key])
-#    count = count + 1
-#    if count == 5:
-#        break
-
-
-temp = MinHashInput.getTrainingSet()
-matrix = temp[0]
-labels = temp[1]
-
+# Get MinHash input
+matrix = pd.read_csv('data.csv', sep=',',header=None).to_numpy(dtype=float, copy=False)
+labels = pd.read_csv('data_labels.csv', sep=',', header=None).to_numpy(dtype=float, copy=False)
 training_set = matrix
 training_labels = labels
 
 input_shape = len(training_set[0])
-
 species = 31911
 species = len(training_labels) + 1
 test_set = training_set
 test_labels = training_labels
 
-basicer_model = Sequential([
-               layers.Flatten(input_shape=(input_shape,)),
-               layers.Dense(50, activation='relu'),
-               layers.Dense(50, activation='relu'),
-               layers.Dense(species)
-        ])
+models = NeuralNetworks(input_shape, species)
+basic_model1 = models.getBasicModel1()
+basic_model2 = models.getBasicModel2()
+basic_model3 = models.getBasicModel3()
 
-# 10 runder liten database: 88
-basic_model = Sequential([
-    layers.Flatten(input_shape=(input_shape,)),
-    layers.Dense(100, activation='relu'),
-    layers.Dense(400, activation='relu'),
-    layers.Dense(species)
-])
-
-#10 runder liten database: 86
-basic_model2 = Sequential([
-    layers.Dense(100, input_shape=(input_shape,), activation='relu'),
-    layers.Dense(400, activation='relu'),
-    layers.Dense(400, activation='relu'),
-    layers.Dense(species)
-])
-
-total_num_words = 65000
 
 #10 runder liten database: 30
+# total_num_words = 65000
 #cnn_model = tf.keras.Sequential([
 #    layers.Embedding(input_dim=total_num_words, output_dim=100),
 #    layers.Conv1D(128, 5, activation='relu'),
@@ -83,50 +48,20 @@ total_num_words = 65000
 #])
 
 
+def runModel(model):
+    # Build model
+    model.compile(optimizer='adam',
+                  loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                  metrics=['accuracy']
+                  )
+    # Train model
+    model.fit(training_set, training_labels, epochs=10)
+    # Check model accuracy
+    test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
+    print('\nModel accuracy: ', test_acc)
+    print('\nModel loss: ', test_loss)
 
-model = basicer_model
 
-# Build model
-model.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics=['accuracy']
-              )
-# Train model
-model.fit(training_set, training_labels, epochs=10)
-
-# Check model accuracy
-test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
-print('\nModel accuracy: ', test_acc)
-print('\nModel loss: ', test_loss)
-
-model = basic_model
-
-# Build model
-model.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics=['accuracy']
-              )
-# Train model
-model.fit(training_set, training_labels, epochs=10)
-
-# Check model accuracy
-test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
-print('\nModel accuracy: ', test_acc)
-print('\nModel loss: ', test_loss)
-
-model = basic_model2
-
-#model.summary()
-
-# Build model
-model.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics=['accuracy']
-              )
-# Train model
-model.fit(training_set, training_labels, epochs=10)
-
-# Check model accuracy
-test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
-print('\nModel accuracy: ', test_acc)
-print('\nModel loss: ', test_loss)
+runModel(basic_model1)
+runModel(basic_model2)
+runModel(basic_model3)
