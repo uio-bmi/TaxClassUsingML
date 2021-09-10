@@ -9,24 +9,23 @@ from tensorflow.keras import layers
 import numpy as np
 import pandas as pd
 from Models.basic_neural import NeuralNetworks
+from RepresentationApproaches.HashSketch.sourmash_sign import HashSketches
 
 # Get MinHash input
-matrix = pd.read_csv('data.csv', sep=',',header=None).to_numpy(dtype=float, copy=False)
-labels = pd.read_csv('data_labels.csv', sep=',', header=None).to_numpy(dtype=float, copy=False)
-training_set = matrix
-training_labels = labels
+#matrix = pd.read_csv('data.csv', sep=',',header=None).to_numpy(dtype=float, copy=False)
+#labels = pd.read_csv('data_labels.csv', sep=',', header=None).to_numpy(dtype=float, copy=False)
+#training_set = matrix
+#training_labels = labels
+
+temp = HashSketches.getData()
+training_set = temp[0]
+training_labels = temp[1]
 
 input_shape = len(training_set[0])
 species = 31911
-species = len(training_labels) + 1
+species = len(training_labels)
 test_set = training_set
 test_labels = training_labels
-
-models = NeuralNetworks(input_shape, species)
-basic_model1 = models.getBasicModel1()
-basic_model2 = models.getBasicModel2()
-basic_model3 = models.getBasicModel3()
-
 
 #10 runder liten database: 30
 # total_num_words = 65000
@@ -47,6 +46,8 @@ basic_model3 = models.getBasicModel3()
 #    layers.Dense(species, activation="softmax")
 #])
 
+models = NeuralNetworks(input_shape, species)
+basic_model = models.getBasicModel7()
 
 def runModel(model):
     # Build model
@@ -55,13 +56,11 @@ def runModel(model):
                   metrics=['accuracy']
                   )
     # Train model
-    model.fit(training_set, training_labels, epochs=10)
+    model.fit(training_set, training_labels, epochs=100)
     # Check model accuracy
     test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
     print('\nModel accuracy: ', test_acc)
     print('\nModel loss: ', test_loss)
 
 
-runModel(basic_model1)
-runModel(basic_model2)
-runModel(basic_model3)
+runModel(basic_model)
