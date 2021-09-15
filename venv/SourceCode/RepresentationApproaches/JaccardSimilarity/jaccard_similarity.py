@@ -5,7 +5,7 @@ import csv
 import pandas as pd
 
 # This class fetches signatures created using MinHash.
-class MinHashInput:
+class JaccardSimilarityInput:
 
    # Method retrieves the MinHash singnatures from a document. These singatures have already
    # been transformed to a comparable format.

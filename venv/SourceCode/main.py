@@ -10,16 +10,19 @@ import numpy as np
 import pandas as pd
 from Models.basic_neural import NeuralNetworks
 from RepresentationApproaches.HashSketch.sourmash_sign import HashSketches
+from RepresentationApproaches.JaccardSimilarity.jaccard_similarity import JaccardSimilarityInput
 
-# Get MinHash input
-#matrix = pd.read_csv('data.csv', sep=',',header=None).to_numpy(dtype=float, copy=False)
-#labels = pd.read_csv('data_labels.csv', sep=',', header=None).to_numpy(dtype=float, copy=False)
-#training_set = matrix
-#training_labels = labels
+# Get minhash sketch input
+#temp = HashSketches.getData()
+#training_set = temp[0]
+#training_labels = temp[1]
 
-temp = HashSketches.getData()
-training_set = temp[0]
-training_labels = temp[1]
+# Get Jaccard similarity input
+matrix = pd.read_csv('data.csv', sep=',',header=None).to_numpy(dtype=float, copy=False)
+labels = pd.read_csv('data_labels.csv', sep=',', header=None).to_numpy(dtype=float, copy=False)
+training_set = matrix
+training_labels = labels
+
 
 input_shape = len(training_set[0])
 species = 31911
@@ -47,7 +50,7 @@ test_labels = training_labels
 #])
 
 models = NeuralNetworks(input_shape, species)
-basic_model = models.getBasicModel7()
+basic_model = models.getBasicModel1()
 
 def runModel(model):
     # Build model
@@ -61,6 +64,5 @@ def runModel(model):
     test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
     print('\nModel accuracy: ', test_acc)
     print('\nModel loss: ', test_loss)
-
 
 runModel(basic_model)
