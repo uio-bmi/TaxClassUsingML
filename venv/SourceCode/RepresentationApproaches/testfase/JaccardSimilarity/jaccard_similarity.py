@@ -4,16 +4,16 @@ from sourmash import fig
 import csv
 import pandas as pd
 
-# This class fetches signatures created using MinHash.
+# This class prepares input created using Jaccard similarity on MinHash signatures.
 class JaccardSimilarityInput:
 
    # Method retrieves the MinHash singnatures from a document. These singatures have already
    # been transformed to a comparable format.
    @staticmethod
    def getTrainingSet():
-       print("Preparing MinHash training set...")
-       speciesNames = MinHashInput.__readSpeciesNames()
-       matrix, labels = fig.load_matrix_and_labels("./compare-demo")
+       print("Preparing JaccardSimilarity training set...")
+       speciesNames = JaccardSimilarityInput.__readSpeciesNames()
+       matrix, labels = fig.load_matrix_and_labels("./jaccard_GCF")
 
        #Transform label names to species names.
        for index, label in enumerate(labels):
@@ -22,7 +22,6 @@ class JaccardSimilarityInput:
 
        #Replace species names with numerical representation.
        speciesDictionary = {}
-       speciesDictionary["Unknown"] = 0
        for index, species in enumerate(labels):
            if species in speciesDictionary:
                labels[index] = speciesDictionary[species]
@@ -33,8 +32,12 @@ class JaccardSimilarityInput:
        labels = labels / 255.0
 
        print("Saving to csv")
+       print("Matrix...")
        pd.DataFrame(matrix).to_csv("./data.csv", header=None, index=None)
+       print("Finished matrix")
+       print("Labels...")
        pd.DataFrame(labels).to_csv("./data_labels.csv", header=None, index=None)
+       print("Finished labels")
        print("Finished preparing MinHash dataset")
 
 

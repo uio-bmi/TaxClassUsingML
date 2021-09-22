@@ -11,7 +11,7 @@ class HashSketches:
     @staticmethod
     def __getFileSpeciesDictionary():
         labels = {}
-        labels_file = open("./RepresentationApproaches/HashSketch/gtdb_taxonomy.tsv", encoding="utf8")
+        labels_file = open("./RepresentationApproach/HashSketch/gtdb_taxonomy.tsv", encoding="utf8")
         label_reader = csv.reader(labels_file, delimiter="\t", quotechar='"')
         for row in label_reader:
             genusLabel = row[1].split(";g__", 1)[0]
@@ -21,7 +21,7 @@ class HashSketches:
     # Method returns the hash sketches and species labels.
     @staticmethod
     def __getRawHashSignAndSpeciesLables():
-        path = "./RepresentationApproaches/HashSketch/Signatures/"
+        path = "./RepresentationApproach/HashSketch/Signatures/"
         signatures = []
         speciesNames = HashSketches.__getFileSpeciesDictionary()
         labels = []
@@ -47,7 +47,6 @@ class HashSketches:
             else:
                 labels[index] = len(speciesDictionary)
                 speciesDictionary[species] = len(speciesDictionary)
-        print("her", len(speciesDictionary))
         labels = np.array(labels, dtype=float)
         labels = labels / 255.0
         return [signatures, labels]

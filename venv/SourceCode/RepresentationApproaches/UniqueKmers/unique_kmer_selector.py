@@ -5,7 +5,7 @@ class UniqueKmerSelector:
     unique_kmers = {}
     useless_kmers = {} #kmers which exist in more than one file
 
-    # Method adds a kmer to the class dictionaries.
+    # Method adds a kmer to the class dictionaries. Usd to identify unique kmers.
     def __addToDictionary(self, kmer):
         if kmer in self.unique_kmers or kmer[::-1] in self.unique_kmers:
             try:
@@ -18,7 +18,7 @@ class UniqueKmerSelector:
 
     # Method goes through a file and adds every kmer to the class dictionaries.
     def __findUselessKmersInFile(self, file):
-        with gzip.open(file, "rt") as f:
+        with open(file, "rt", encoding="utf8") as f:
             for line in f:
                 if line.find(">"):
                     self.__addToDictionary(line.rstrip("\n"))
@@ -37,17 +37,10 @@ class UniqueKmerSelector:
         return files
 
 
-    def prepareFiles(self):
-        files = self.__getFileNames("Counts")
-        for i in range(len(files)):
-            os.renames(files[i], "./Unique/" +
-                       files[i].replace(".fna.gz.fa.gz", "").replace("./Counts/", "") + ".fna.gz")
-
-
     # Method goes through every file in the Counts folder and removes common kmers.
     def stripFiles(self):
         telle = 0
-        files = self.__getFileNames("Unique")
+        files = self.__getFileNames("Counts")
 
         #For each file in the folder...
         for i in range(len(files)):
@@ -71,19 +64,21 @@ class UniqueKmerSelector:
                     removal_pointer = removal_pointer + 1
                     telle = telle + 1
 
+                self.unique_kmers.clear()
                 comparison_pointer = comparison_pointer + 1
+
             print("telle", telle)
 
     # Method replaces old file with a new file where the useless kmers are gone.
     def __removeUselessKmers(self, file):
-        clean_file = open(file + "_temp.fna.gz", "w+") #Create replacement file
-        file = gzip.open(file, "rt")
+        clean_file = open(file + "_temp", "w+") #Create replacement file
+        file = open(file, "rt")
         content_arr = file.read().split(">")
         for elem in content_arr:
             try:
                 kmer = elem.split("\n")[1]
                 #Write kmers to new file unless they are useless
-                if kmer not in self.useless_kmers:
+                if kmer not in self.useless_kmers and kmer[::-1] not in self.useless_kmers:
                     temp = ">\n" + kmer + "\n"
                     clean_file.write(temp)
             except:
@@ -92,4 +87,4 @@ class UniqueKmerSelector:
         clean_file.close()
         file_name = file.name
         os.remove(file.name)
-        os.renames(file_name + "_temp.fna.gz", file_name)
+        os.renames(file_name + "_temp", file_name)
