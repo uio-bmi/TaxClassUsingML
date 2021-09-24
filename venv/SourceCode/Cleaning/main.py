@@ -1,3 +1,3 @@
-from trash_remover import TrashRemover
+from divide_database import DivideDatabase
 
-TrashRemover.clean()
+DivideDatabase.divideDatabase()

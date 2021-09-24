@@ -21,7 +21,7 @@ class KmerGenerator:
         file.close()
         return randomKmers
 
-    # Method generates a random kmer of given length.
+    # Method generates a random k-mer of given length.
     @staticmethod
     def __generateRandomKmer(kmerLength):
         randomKmer = ""
