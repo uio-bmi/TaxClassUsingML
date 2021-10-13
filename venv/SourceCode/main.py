@@ -9,19 +9,19 @@ from tensorflow.keras import layers
 import numpy as np
 import pandas as pd
 from Models.basic_neural import NeuralNetworks
-from RepresentationApproaches.HashSketch.sourmash_sign import HashSketches
-from RepresentationApproaches.JaccardSimilarity.jaccard_similarity import JaccardSimilarityInput
+from RepresentationApproaches.testfase.HashSketch.sourmash_sign import HashSketches
+from RepresentationApproaches.testfase.JaccardSimilarity.jaccard_similarity import JaccardSimilarityInput
 
 # Get minhash sketch input
-#temp = HashSketches.getData()
-#training_set = temp[0]
-#training_labels = temp[1]
+temp = HashSketches.getData()
+training_set = temp[0]
+training_labels = temp[1]
 
 # Get Jaccard similarity input
-matrix = pd.read_csv('data.csv', sep=',',header=None).to_numpy(dtype=float, copy=False)
-labels = pd.read_csv('data_labels.csv', sep=',', header=None).to_numpy(dtype=float, copy=False)
-training_set = matrix
-training_labels = labels
+#matrix = pd.read_csv('data.csv', sep=',',header=None).to_numpy(dtype=float, copy=False)
+#labels = pd.read_csv('data_labels.csv', sep=',', header=None).to_numpy(dtype=float, copy=False)
+#training_set = matrix
+#training_labels = labels
 
 
 input_shape = len(training_set[0])

@@ -14,7 +14,6 @@ class DivideDatabase:
 
         #Move files into validation set
         for file in validation_set:
-            print(file)
 
             try:
               os.replace("./TrainingSet/" + file + "_genomic.fna.gz",
@@ -25,9 +24,10 @@ class DivideDatabase:
 
         #Move files into test set
         for file in test_set:
+            print(file)
             try:
                 os.replace("./TrainingSet/" + file + "_genomic.fna.gz",
-                           "./TestSet" + file + "_genomic.fna.gz")
+                           "./TestSet/" + file + "_genomic.fna.gz")
             except:
                 pass
 
@@ -54,7 +54,7 @@ class DivideDatabase:
         size_of_test_set = math.floor(((len(training_set) + len(validation_set)) / 100) * 20)
         for i in range(0, size_of_test_set):
             selected_file = random.randint(0, len(training_set))
-            test_set.append(selected_file)
+            test_set.append(training_set[selected_file])
             del training_set[selected_file]
 
         print("Length training set: ", len(training_set))
