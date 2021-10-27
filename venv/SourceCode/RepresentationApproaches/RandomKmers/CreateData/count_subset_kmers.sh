@@ -11,7 +11,7 @@ FILES=./TrainingSet/*
 for f in $FILES
 do
  zcat $f > $f_temp.fna
- jellyfish count -m 12 -s 100M -C -t 10 -o $f.jf --if random_kmers.fa $f_temp.fna
+ jellyfish count -m 8 -s 100M -C -t 10 -o $f.jf --if random_kmers.fa $f_temp.fna
  rm $f_temp.fna
  jellyfish dump $f.jf > $f.fa
  rm $f.jf

@@ -1,6 +1,6 @@
 from random_kmers import KmerGenerator
 
-temp = KmerGenerator.generateRandomKmers(5000, 12)
+temp = KmerGenerator.generateRandomKmers(5000, 8)
 
 # Used to check that the correct number of kmers has been generated.
 kmers = []

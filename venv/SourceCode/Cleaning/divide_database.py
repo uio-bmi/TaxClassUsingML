@@ -41,20 +41,20 @@ class DivideDatabase:
           file_name = row[0].replace("GB_", "").replace("RS_", "")
           training_set.append(file_name)
 
-        # Select random files for the validation set
+        # Select random files for the validation set.
         validation_set = []
         size_of_validation_set = math.floor((len(training_set) / 100) * 30)
         for i in range(0, size_of_validation_set):
             selected_file = random.randint(0, len(training_set))
-            validation_set.append(training_set[selected_file])
+            validation_set.append(training_set[selected_file]) #Add file to validation set.
             del training_set[selected_file]
 
-        # Select random files for the test set
+        # Select random files for the test set.
         test_set = []
         size_of_test_set = math.floor(((len(training_set) + len(validation_set)) / 100) * 20)
         for i in range(0, size_of_test_set):
             selected_file = random.randint(0, len(training_set))
-            test_set.append(training_set[selected_file])
+            test_set.append(training_set[selected_file]) #Add file to test set.
             del training_set[selected_file]
 
         print("Length training set: ", len(training_set))

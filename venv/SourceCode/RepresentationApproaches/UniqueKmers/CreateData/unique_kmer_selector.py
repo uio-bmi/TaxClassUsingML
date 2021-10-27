@@ -39,12 +39,11 @@ class UniqueKmerSelector:
 
     # Method goes through every file in the Counts folder and removes common kmers.
     def stripFiles(self):
-        telle = 0
         files = self.__getFileNames("Counts")
 
         #For each file in the folder...
         for i in range(len(files)):
-            print("Working on file ", i)
+            print("Working on file " + i + files[i])
             starter_file = files[i]
             comparison_pointer = i + 1 #Points to file we are comparing starter_file to
 
@@ -57,10 +56,11 @@ class UniqueKmerSelector:
                 self.__removeUselessKmers(starter_file)
                 removal_pointer = comparison_pointer
 
-                #Remove common kmers with starter file from every other file.
-                while removal_pointer < len(files):
-                    self.__removeUselessKmers(files[removal_pointer])
-                    removal_pointer = removal_pointer + 1
+                if len(self.useless_kmers) > 0:
+                   #Remove common kmers with starter file from every other file.
+                   while removal_pointer < len(files):
+                       self.__removeUselessKmers(files[removal_pointer])
+                       removal_pointer = removal_pointer + 1
 
                 self.unique_kmers.clear()
                 comparison_pointer = comparison_pointer + 1
@@ -71,19 +71,23 @@ class UniqueKmerSelector:
     # Method replaces old file with a new file where the useless kmers are gone.
     def __removeUselessKmers(self, file):
         clean_file = open(file + "_temp", "w+") #Create replacement file
-        file = open(file, "rt")
-        content_arr = file.read().split(">")
-        for elem in content_arr:
-            try:
+        try:
+          file = open(file, "rt")
+          content_arr = file.read().split(">")
+          for elem in content_arr:
+             try:
                 kmer = elem.split("\n")[1]
                 #Write kmers to new file unless they are useless
                 if kmer not in self.useless_kmers and kmer[::-1] not in self.useless_kmers:
                     temp = ">\n" + kmer + "\n"
                     clean_file.write(temp)
-            except:
+             except:
                 pass
-        file.close()
-        clean_file.close()
-        file_name = file.name
-        os.remove(file.name)
-        os.renames(file_name + "_temp", file_name)
+
+          file.close()
+          clean_file.close()
+          file_name = file.name
+          os.remove(file.name)
+          os.renames(file_name + "_temp", file_name)
+        except:
+            pass
