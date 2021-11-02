@@ -5,11 +5,13 @@ import json
 # document.
 class CombineSignatures:
 
-    # Method loops over all files and finds their signature.
+    # Method loops over all files and finds their signature, then adds the k-mers
+    # in the signature to the all_sign file.
     @staticmethod
     def loopOverSignatures():
         for file in os.listdir("./Signatures/"):
             print("Working on file " + file + "...")
+            #Get signature from signature file
             content = open(os.path.join("./Signatures/", file)).read()[1:-1]
             content = json.loads(content)
             signature = content["signatures"][0]["mins"]
@@ -23,6 +25,6 @@ class CombineSignatures:
     # already present.
     @staticmethod
     def __addKmer(kmer):
-        with open("./all_sign.fna", "r+") as file:
+        with open("all_sign.fna", "r+") as file:
             if kmer not in file.read():
                 file.write(kmer + "\n")

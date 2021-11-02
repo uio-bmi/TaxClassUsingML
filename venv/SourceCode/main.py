@@ -1,6 +1,9 @@
 # coding=utf-8
 import json
 import os
+
+import numpy
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 from tensorflow import keras
@@ -9,20 +12,20 @@ from tensorflow.keras import layers
 import numpy as np
 import pandas as pd
 from Models.basic_neural import NeuralNetworks
-from RepresentationApproaches.testfase.HashSketch.sourmash_sign import HashSketches
-from RepresentationApproaches.testfase.JaccardSimilarity.jaccard_similarity import JaccardSimilarityInput
+from numpy import loadtxt
 
-# Get minhash sketch input
-temp = HashSketches.getData()
-training_set = temp[0]
-training_labels = temp[1]
+# Importing MinHash input
+signatures = loadtxt("all_vectors.txt", delimiter=" ", unpack=False)
+signatures = np.array(signatures, dtype=float)
+labels = []
+labelFile = open("all_labels.txt", "r").readlines()
+for label in labelFile:
+    labels.append(label)
+labels = np.array(labels, dtype=float)
 
-# Get Jaccard similarity input
-#matrix = pd.read_csv('data.csv', sep=',',header=None).to_numpy(dtype=float, copy=False)
-#labels = pd.read_csv('data_labels.csv', sep=',', header=None).to_numpy(dtype=float, copy=False)
-#training_set = matrix
-#training_labels = labels
 
+training_set = signatures
+training_labels = labels
 
 input_shape = len(training_set[0])
 species = 31911
