@@ -4,10 +4,12 @@ import sys
 from label_maker import LabelMaker
 import numpy as np
 
-class PrepareSigns:
+class SignatureTransformer:
 
     kmers = [] #All k-mers in set of signatures
-    species = {} #All species labels in set of signatures
+    classifications = {} #All classification labels and corresponding file name
+    classes = []  # All classes in set of signatures
+
     vectors = [] #All binary vectors
     labels = [] #All binary vector labels
 
@@ -20,18 +22,22 @@ class PrepareSigns:
 
     # Method loops through every signature file in directory and creates an array of
     # binary vectors.
-    def __transformSignatures(self):
+    def __transformSignsAndLabels(self):
         for file in os.listdir("./Signatures/"):
-            #Open signature file
+
+            #Get signature
             content = open(os.path.join("./Signatures/", file)).read()[1:-1]
             content = json.loads(content)
             signature = content["signatures"][0]["mins"]
             #Create binary vector from signature
             binaryVector = self.__createBinaryVector(signature)
             self.vectors.append(binaryVector)
-            #Add correct classification label to corresponding species array
+
+            #Get label
             label = content["filename"].replace("./TrainingSet/", "").replace("_genomic.fna.gz", "")
-            label = self.species[label]
+            label = self.classifications[label]
+            #Create one-hot encoding vector from label
+            label = LabelMaker.getOneHotEncoding(label, self.classes)
             self.labels.append(label)
 
     # Method takes a signature and returns its binary vector.
@@ -46,11 +52,11 @@ class PrepareSigns:
 
     # Method transforms all signatures to binary vectors and classification
     # labels to numerical format.
-    def doTransformation(self):
-        self.species = LabelMaker.getSpeciesDictionary(True)
+    def doTransformation(self, speciesLevel):
         self.__createKmerDictionary()
-        self.__transformSignatures()
-        self.labels = LabelMaker.transformLabels(self.labels, self.species)
+        self.classifications = LabelMaker.getSpeciesDictionary(speciesLevel)
+        self.classes = LabelMaker.getClasses(self.classifications)
+        self.__transformSignsAndLabels()
 
     # Method returns all binary vectors.
     def getSignatures(self):

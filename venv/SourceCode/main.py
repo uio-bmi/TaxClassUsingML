@@ -17,19 +17,17 @@ from numpy import loadtxt
 # Importing MinHash input
 signatures = loadtxt("all_vectors.txt", delimiter=" ", unpack=False)
 signatures = np.array(signatures, dtype=float)
-labels = []
-labelFile = open("all_labels.txt", "r").readlines()
-for label in labelFile:
-    labels.append(label)
+labels = loadtxt("all_labels.txt", delimiter=" ", unpack=False)
 labels = np.array(labels, dtype=float)
 
+print(len(signatures))
+print(len(labels))
 
 training_set = signatures
 training_labels = labels
 
 input_shape = len(training_set[0])
-species = 31911
-species = len(training_labels)
+species = len(training_labels[0])
 test_set = training_set
 test_labels = training_labels
 

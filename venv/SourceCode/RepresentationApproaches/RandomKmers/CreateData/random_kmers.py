@@ -18,7 +18,6 @@ class KmerGenerator:
         file = open("random_kmers.fa", "a")
         for kmer in randomKmers:
             file.write(">\n" + kmer + "\n")
-            file.write(">\n" + kmer[::-1] + "\n")
         file.close()
         return randomKmers
 

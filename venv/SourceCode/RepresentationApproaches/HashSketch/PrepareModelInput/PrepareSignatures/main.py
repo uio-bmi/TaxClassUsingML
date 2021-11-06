@@ -1,16 +1,28 @@
-import numpy as np
-from prepare_signs import PrepareSigns
+from signature_transformer import SignatureTransformer
 import json
 import csv
-from numpy import loadtxt
-import pickle
 import numpy as np
+from numpy import loadtxt
 
-transformer = PrepareSigns()
-transformer.doTransformation()
+transformer = SignatureTransformer()
+transformer.doTransformation(False)
 signatures = transformer.getSignatures()
 labels = transformer.getLabels()
-labels = np.array(labels, dtype=str)
+
+larger = 0
+smaller = 0
+for signature in signatures:
+    count = 0
+    for elem in signature:
+        if elem == 1:
+            count = count + 1
+    if count > 3000:
+        larger = larger + 1
+    if count < 3000:
+        smaller = smaller + 1
+
+print("Larger: ", larger)
+print("Smaller: ", smaller)
 
 # Write signatures to file
 with open("all_vectors.txt", "w") as file:
@@ -18,5 +30,4 @@ with open("all_vectors.txt", "w") as file:
 
 # Write labels to file
 with open("all_labels.txt", "w") as file:
-    for label in labels:
-        file.write(label + "\n")
+    csv.writer(file, delimiter=" ").writerows(labels)
