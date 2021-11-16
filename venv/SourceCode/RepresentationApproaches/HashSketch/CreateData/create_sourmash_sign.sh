@@ -15,5 +15,5 @@ for f in $FILES
 do
   sourmash sketch dna -p num=3000,k=12 $f -o $f.sig
   mv $f.sig ./Signatures/
-  mv $f ./Smashed_training_set/
+  mv $f ./Smashed_test_set/
 done

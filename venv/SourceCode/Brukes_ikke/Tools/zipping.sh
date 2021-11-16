@@ -5,7 +5,7 @@
 #SBATCH --mem-per-cpu=16MB
 #SBATCH --ntasks=1
 
-FILES=./Unique/*
+FILES=./Counts/*
 for f in $FILES
 do
   gunzip $f

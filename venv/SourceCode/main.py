@@ -1,9 +1,7 @@
 # coding=utf-8
 import json
 import os
-
 import numpy
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 from tensorflow import keras
@@ -12,58 +10,65 @@ from tensorflow.keras import layers
 import numpy as np
 import pandas as pd
 from Models.basic_neural import NeuralNetworks
+from Models.convolutional_neural import ConvolutionalModels
+from Models.more_neural import MoreNeuralNetworks
 from numpy import loadtxt
 
-# Importing MinHash input
+# Importing MinHash training set
 signatures = loadtxt("all_vectors.txt", delimiter=" ", unpack=False)
 signatures = np.array(signatures, dtype=float)
 labels = loadtxt("all_labels.txt", delimiter=" ", unpack=False)
 labels = np.array(labels, dtype=float)
-
-print(len(signatures))
-print(len(labels))
-
 training_set = signatures
 training_labels = labels
 
+# Import MinHash test set
+test_signatures = loadtxt("test_vectors.txt", delimiter=" ", unpack=False)
+test_signatures = np.array(test_signatures, dtype=float)
+test_labels = loadtxt("test_labels.txt", delimiter=" ", unpack=False)
+test_labels = np.array(test_labels, dtype=float)
+test_set = test_signatures
+test_labels = test_labels
+
+# For vanlige nettverk
 input_shape = len(training_set[0])
 species = len(training_labels[0])
-test_set = training_set
-test_labels = training_labels
+models = MoreNeuralNetworks(input_shape, species)
 
-#10 runder liten database: 30
-# total_num_words = 65000
-#cnn_model = tf.keras.Sequential([
-#    layers.Embedding(input_dim=total_num_words, output_dim=100),
-#    layers.Conv1D(128, 5, activation='relu'),
-#    layers.AveragePooling1D(pool_size=2, padding='valid'),
-#    layers.Conv1D(128, 5, activation='relu'),
-#    layers.AveragePooling1D(pool_size=2, padding='valid'),
-#    layers.Dense(64, activation='relu'),
-#    layers.GlobalAveragePooling1D(),
-#    layers.Dense(species, activation='softmax')
-#])
-
-
-#cnn_model = tf.keras.Sequential([
-#    layers.Conv1D(filters=1, kernel_size=1, activation="relu", input_shape=(1, 11), name="dette"),
-#    layers.Dense(species, activation="softmax")
-#])
-
-models = NeuralNetworks(input_shape, species)
-basic_model = models.getBasicModel1()
+# For convolutional nettverk
+# training_set = training_set.reshape((5, 40000))
+# training_labels = training_labels.reshape((5, len(training_labels[0])))
+# test_set = test_set.reshape((5, 40000))
+# test_labels = test_labels.reshape((5, len(test_labels[0])))
+#timesteps = training_set.shape[1]
+#features = training_set.shape[2]
+#outputs = training_labels[1]
+#input_shape = tf.shape(training_set)
+#species = len(training_labels[0])
+#models = ConvolutionalModels(input_shape, species)
 
 def runModel(model):
     # Build model
-    model.compile(optimizer='adam',
-                  loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    model.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=0.1),
+                  loss=tf.keras.losses.MeanAbsoluteError(),
                   metrics=['accuracy']
                   )
     # Train model
-    model.fit(training_set, training_labels, epochs=100)
+    model.fit(training_set, training_labels, epochs=10)
     # Check model accuracy
     test_loss, test_acc = model.evaluate(test_set, test_labels, verbose=2)
     print('\nModel accuracy: ', test_acc)
     print('\nModel loss: ', test_loss)
 
-runModel(basic_model)
+model = models.getBasicModel1()
+runModel(model)
+model = models.getBasicModel2()
+runModel(model)
+model = models.getBasicModel3()
+runModel(model)
+model = models.getBasicModel4()
+runModel(model)
+model = models.getBasicModel5()
+runModel(model)
+model = models.getBasicModel6()
+runModel(model)

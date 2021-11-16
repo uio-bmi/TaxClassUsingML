@@ -15,15 +15,15 @@ class NeuralNetworks:
         self.input_shape = input_shape
         self.species = species
 
-    # 0,0018  0,0018  0,0018
+    # 40%
     def getBasicModel1(self):
         return Sequential([
                layers.Flatten(input_shape=(self.input_shape,)),
                layers.Dense(self.species, activation='relu'),
-               layers.Dense(self.species)
+               layers.Dense(self.species, activation='softmax')
         ])
 
-    # 0,0037  0,0037  0,0037
+    # 0.0002
     def getBasicModel2(self):
         return Sequential([
                layers.Flatten(input_shape=(self.input_shape,)),
@@ -32,7 +32,7 @@ class NeuralNetworks:
                layers.Dense(self.species)
         ])
 
-    # 0,0037  0,0037 0,0037
+    # 0
     def getBasicModel3(self):
         return Sequential([
             layers.Dense(self.species, input_shape=(self.input_shape,), activation='relu'),
@@ -41,7 +41,7 @@ class NeuralNetworks:
             layers.Dense(self.species)
         ])
 
-    # 0,0037  0,0037  0,0037
+    # 0.0002
     def getBasicModel4(self):
         return Sequential([
             layers.Dense(self.species, input_shape=(self.input_shape,), activation='relu'),
@@ -51,7 +51,7 @@ class NeuralNetworks:
             layers.Dense(self.species)
         ])
 
-    # 0,0018  0,0018  0,0037
+    # 0,016%
     def getBasicModel5(self):
         return Sequential([
             layers.Dense(self.species, input_shape=(self.input_shape,), activation='relu'),
@@ -62,27 +62,4 @@ class NeuralNetworks:
             layers.Dense(self.species)
         ])
 
-    # 0,0037  0,0037  0,0037
-    def getBasicModel6(self):
-        return Sequential([
-            layers.Dense(self.species, input_shape=(self.input_shape,), activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species)
-        ])
 
-    # 0,0037  0,0018  0,0018
-    def getBasicModel7(self):
-        return Sequential([
-            layers.Dense(self.species, input_shape=(self.input_shape,), activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species, activation='relu'),
-            layers.Dense(self.species)
-        ])

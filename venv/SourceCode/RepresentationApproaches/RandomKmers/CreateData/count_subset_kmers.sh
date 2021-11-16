@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=nn9383k
 #SBATCH --job-name=jellyfishing
-#SBATCH --time=0-08:00:00
+#SBATCH --time=1-00:00:00
 #SBATCH --mem-per-cpu=50MB
 #SBATCH --ntasks=1
 

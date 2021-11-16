@@ -34,7 +34,7 @@ class SignatureTransformer:
             self.vectors.append(binaryVector)
 
             #Get label
-            label = content["filename"].replace("./TrainingSet/", "").replace("_genomic.fna.gz", "")
+            label = content["filename"].replace("./ValidationSet/", "").replace("_genomic.fna.gz", "")
             label = self.classifications[label]
             #Create one-hot encoding vector from label
             label = LabelMaker.getOneHotEncoding(label, self.classes)

@@ -16,7 +16,7 @@ class CountTransformer:
             #Create vector representation
             self.vectors.append(self.__getVectorRepresentation(file, countBased))
             #Create classification label
-            classification = classifications[file.replace("_genomic.fna.gz.fa", "")]
+            classification = classifications[file.replace("_genomic.fna.gz.fa.gz", "")]
             classification = LabelMaker.getOneHotEncoding(classification, classes)
             self.labels.append(classification)
 

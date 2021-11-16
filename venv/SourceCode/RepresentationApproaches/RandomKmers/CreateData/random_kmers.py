@@ -9,11 +9,9 @@ class KmerGenerator:
     @staticmethod
     def generateRandomKmers(numberOfKmers, kmerLength):
         randomKmers = []
-        for index in range(0, numberOfKmers):
+        while len(randomKmers) < numberOfKmers:
             randomKmer = KmerGenerator.__generateRandomKmer(kmerLength)
-            if randomKmer in randomKmers or randomKmer[::-1] in randomKmers:
-                numberOfKmers = numberOfKmers + 1
-            else:
+            if randomKmer not in randomKmers or randomKmer[::-1] not in randomKmers:
                 randomKmers.append(randomKmer)
         file = open("random_kmers.fa", "a")
         for kmer in randomKmers:
