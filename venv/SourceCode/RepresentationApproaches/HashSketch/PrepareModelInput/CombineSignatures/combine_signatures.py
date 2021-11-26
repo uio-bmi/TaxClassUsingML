@@ -6,7 +6,7 @@ import json
 class CombineSignatures:
 
     # Method loops over all files and finds their signature, then adds the k-mers
-    # in the signature to the all_sign file.
+    # in the signature to a file.
     @staticmethod
     def loopOverSignatures():
         for file in os.listdir("./Signatures/"):
@@ -15,7 +15,7 @@ class CombineSignatures:
             content = open(os.path.join("./Signatures/", file)).read()[1:-1]
             content = json.loads(content)
             signature = content["signatures"][0]["mins"]
-            #Add each k-mer in the signature to the all_sign file.
+            #Add each k-mer in the signature to the file.
             for kmer in signature:
                 CombineSignatures.__addKmer(str(kmer))
             os.rename("./Signatures/" + file, "./Finished/" + file)

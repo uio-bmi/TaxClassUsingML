@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=nn9383k
-#SBATCH --job-name=jellyfishing
+#SBATCH --job-name=count_subset_kmers
 #SBATCH --time=1-00:00:00
 #SBATCH --mem-per-cpu=50MB
 #SBATCH --ntasks=1

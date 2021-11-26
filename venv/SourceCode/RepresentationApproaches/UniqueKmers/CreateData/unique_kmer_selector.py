@@ -2,10 +2,10 @@ import os
 import gzip
 
 class UniqueKmerSelector:
-    unique_kmers = {}
-    useless_kmers = {} #kmers which exist in more than one file
+    unique_kmers = {} #K-mers that are unique to a genome
+    useless_kmers = {} #K-mers which exist in more than one genome
 
-    # Method adds a kmer to the class dictionaries. Used to identify unique kmers.
+    # Method adds a k-mer to the class dictionaries. Used to identify unique k-mers.
     def __addToDictionary(self, kmer):
         if kmer in self.unique_kmers or kmer[::-1] in self.unique_kmers:
             try:
@@ -16,7 +16,7 @@ class UniqueKmerSelector:
         else:
             self.unique_kmers[kmer] = 1
 
-    # Method goes through a file and adds every kmer to the class dictionaries.
+    # Method goes through a file and adds every k-mer to the class dictionaries.
     def __findUselessKmersInFile(self, file):
         with open(file, "rt", encoding="utf8") as f:
             for line in f:
@@ -24,7 +24,7 @@ class UniqueKmerSelector:
                     self.__addToDictionary(line.rstrip("\n"))
         f.close()
 
-    # Method returns an array of all files in the Counts folder.
+    # Method returns an array of all files in the the given folder.
     @staticmethod
     def __getFileNames(directory):
         print("Finding file names...")
@@ -37,7 +37,7 @@ class UniqueKmerSelector:
         return files
 
 
-    # Method goes through every file in the Counts folder and removes common kmers.
+    # Method goes through every file in the folder og k-mer counts and removes common k-mers.
     def stripFiles(self):
         files = self.__getFileNames("Counts")
 
@@ -68,7 +68,7 @@ class UniqueKmerSelector:
             os.rename(starter_file, "./Finished/" + starter_file.replace("./Counts/", ""))
 
 
-    # Method replaces old file with a new file where the useless kmers are gone.
+    # Method replaces old k-mer count file with a new file where the useless kmers are gone.
     def __removeUselessKmers(self, file):
         clean_file = open(file + "_temp", "w+") #Create replacement file
         try:

@@ -1,8 +1,6 @@
 import random
 
-# Class creates a file of randomly generated kmers.
-# Sometimes concurrency makes the program produce the wrong number
-# of kmers. Just re-run the program until you get the correct amount.
+# Class creates a file of randomly generated k-mers.
 class KmerGenerator:
 
     # Method generates a list of randomly generated kmers.

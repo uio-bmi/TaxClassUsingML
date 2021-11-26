@@ -1,6 +1,8 @@
 from count_transformer import CountTransformer
 import csv
 
+# Transform set of k-mer count files into vector representations.
+
 transformer = CountTransformer()
 # Parameters are: speciesLevel and countBased
 transformer.doTransformation(False, False)

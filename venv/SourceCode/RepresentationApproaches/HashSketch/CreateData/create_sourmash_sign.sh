@@ -1,6 +1,6 @@
 #!/usr/bin/sh
 #SBATCH --account=nn9383k
-#SBATCH --job-name=sourmash_signatures
+#SBATCH --job-name=create_sourmash_signatures
 #SBATCH --time=1-00:00:00
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --ntasks=1

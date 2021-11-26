@@ -38,8 +38,10 @@ class CountTransformer:
         scaled_vector = []
         max_value = max(vector)
         min_value = min(vector)
+        scaled_value = 0
         for value in vector:
-            scaled_value = (value - min_value)/(max_value - min_value)
+            if max_value - min_value != 0:
+               scaled_value = (value - min_value) / (max_value - min_value)
             scaled_vector.append(scaled_value)
         return scaled_vector
 

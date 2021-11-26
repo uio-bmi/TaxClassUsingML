@@ -7,13 +7,13 @@ import numpy as np
 class SignatureTransformer:
 
     kmers = [] #All k-mers in set of signatures
-    classifications = {} #All classification labels and corresponding file name
+    classifications = {} #All classification labels and corresponding file names
     classes = []  # All classes in set of signatures
 
     vectors = [] #All binary vectors
     labels = [] #All binary vector labels
 
-    # Method goes through all k-mers in all_sign.fna document and adds them to
+    # Method goes through all k-mers in document and adds them to
     # an array.
     def __createKmerDictionary(self):
         linesOfKmers = open("all_sign.fna", "r").readlines()
