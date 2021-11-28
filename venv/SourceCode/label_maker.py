@@ -2,6 +2,7 @@ import csv
 import numpy as np
 
 # Class used to create classification labels based on filenames and the gtdb_taxonomy.tsv file.
+# gtdb_taxonomy.tsv must be in the same folder as this class.
 class LabelMaker:
 
     # Method creates a dictionary with all the file names and corresponding species labels

@@ -6,6 +6,7 @@ import os
 # Class is used to divide the database into a training set, validation set, and test set.
 class DivideDatabase:
 
+    # Method divides dataset into training, validation and test sets.
     @staticmethod
     def divideDatabase():
         temp = DivideDatabase.__selectSetDivision()
@@ -14,7 +15,6 @@ class DivideDatabase:
 
         #Move files into validation set
         for file in validation_set:
-
             try:
               os.replace("./TrainingSet/" + file + "_genomic.fna.gz",
                          "./ValidationSet/" + file + "_genomic.fna.gz")
@@ -24,13 +24,13 @@ class DivideDatabase:
 
         #Move files into test set
         for file in test_set:
-            print(file)
             try:
                 os.replace("./TrainingSet/" + file + "_genomic.fna.gz",
                            "./TestSet/" + file + "_genomic.fna.gz")
             except:
                 pass
 
+    # Method determines which files should be in the test and validation sets.
     @staticmethod
     def __selectSetDivision():
         # Add all file names to training set
@@ -57,9 +57,6 @@ class DivideDatabase:
             test_set.append(training_set[selected_file]) #Add file to test set.
             del training_set[selected_file]
 
-        print("Length training set: ", len(training_set))
-        print("Length validation set: ", len(validation_set))
-        print("Length test set: ", len(test_set))
         return [validation_set, test_set]
 
 

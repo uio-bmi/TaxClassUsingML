@@ -1,9 +1,9 @@
-from transform_kmers import CountTransformer
+from transform_kmers import DiscriminativeTransformer
 import csv
 
-# Transform set of k-mer counts into representation vectors.
+# Transform set of discriminative k-mers into representation vectors.
 
-transformer = CountTransformer()
+transformer = DiscriminativeTransformer()
 # Parameter is: speciesLevel
 transformer.doTransformation(False)
 vectors = transformer.getVectors()
